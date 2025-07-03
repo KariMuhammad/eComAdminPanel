@@ -27,16 +27,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-import { BadgeEuro, ShoppingBag } from "lucide-react";
+import { BadgeEuro, Circle, ShoppingBag } from "lucide-react";
 import type { SidebarMenuItemType } from "@/lib/types";
+import useAuth from "@/hooks/use-auth";
 
 const data = {
-  user: {
-    name: "Kareem Muhammad",
-    email: "kimoomar007@gmail.com",
-    avatar: "/assets/me.jpg",
-  },
-
   navMain: [
     {
       title: "Customers",
@@ -62,6 +57,26 @@ const data = {
           title: "Categories",
           url: "/categories",
           icon: IconFolder,
+        },
+        {
+          title: "Colors",
+          url: "/colors",
+          icon: Circle,
+        },
+      ],
+    },
+    {
+      title: "Gallery",
+      url: "/gallery",
+      icon: IconCamera,
+      items: [
+        {
+          title: "Images",
+          url: "/gallery",
+        },
+        {
+          title: "Add Image",
+          url: "/gallery/add-image",
         },
       ],
     },
@@ -151,6 +166,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -175,7 +192,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user!} />
       </SidebarFooter>
     </Sidebar>
   );

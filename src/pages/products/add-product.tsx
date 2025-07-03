@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 import { type Product } from "@/types/product";
+import { CreateProductStepsComponent } from "@/constants/create-product-steps";
 
 // Dummy data for categories and brands
 const categories = [
@@ -67,6 +68,8 @@ export default function AddProduct() {
   return (
     <form className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow space-y-6">
       <h2 className="text-2xl font-bold mb-4">Add New Product</h2>
+
+      <CreateProductStepsComponent currentStep={0} />
 
       <div className="space-y-2">
         <Label>Name</Label>

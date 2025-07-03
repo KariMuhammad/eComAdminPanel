@@ -25,6 +25,8 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dasboard />} />
           <Route path="/products" element={<ProductsListPage />} />
+          {/* <Route path="/gallery/add-image" element={<ِAddImageInGalleryUser />} */}
+
           <Route path="/products/add" element={<AddProduct />} />
           {/* <Route path="/categories" element={} /> */}
           <Route path="/categories/add" element={<AddCategory />} />

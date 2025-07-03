@@ -1,4 +1,5 @@
 import Sidebar from "@/components/shared/sidebar";
+
 import { Outlet } from "react-router-dom";
 
 const MainLayout: React.FC = () => {

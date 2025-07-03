@@ -30,7 +30,11 @@ export function RecentReview({
 
       <div className="flex">
         {Array.from({ length: 5 }).map((_, index) => (
-          <Star fill={index < rates ? "yellow" : ""} stroke="#bbb" />
+          <Star
+            fill={index < rates ? "yellow" : ""}
+            stroke="#bbb"
+            key={index}
+          />
         ))}
       </div>
     </>

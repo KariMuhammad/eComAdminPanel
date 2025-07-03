@@ -1,11 +1,11 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function getFirstLastName(user: { name: string }) {
-  const [firstName, lastName] = user.name.split(" ");
+export function getFirstLastName(name: string) {
+  const [firstName, lastName] = name.split(" ");
   return `${firstName[0]}${lastName[0]}`;
 }

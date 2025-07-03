@@ -22,7 +22,11 @@ export function NavMain({ items }: { items: SidebarMenuItemType[] }) {
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
-            <Collapsible defaultOpen className="group/collapsible">
+            <Collapsible
+              defaultOpen
+              className="group/collapsible"
+              key={item.title}
+            >
               <SidebarMenuItem key={item.title}>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton>
@@ -43,7 +47,7 @@ export function NavMain({ items }: { items: SidebarMenuItemType[] }) {
                   <SidebarMenuSub>
                     {item.items &&
                       item.items.map((subItem) => (
-                        <Link to={subItem.url}>
+                        <Link to={subItem.url} key={subItem.title}>
                           <SidebarMenuSubItem>
                             <SidebarMenuButton>
                               <span className="flex items-center gap-1">
