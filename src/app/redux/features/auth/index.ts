@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import * as authServices from "../../../services/authServices";
+import * as authServices from "../../../../apis/services/auth-services";
 import type { CommonState } from "@/interfaces";
 import { toast } from "sonner";
 
@@ -52,7 +52,15 @@ export const login = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.error = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+      state.user = null;
+      state.message = "Logout";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
       state.loading = true;
@@ -85,8 +93,8 @@ const authSlice = createSlice({
   },
 });
 
-export const authReducer = authSlice.reducer;
-export const authActions = authSlice.actions;
+export const authReducer = authSlice.reducer; // used in wire configureStore
+export const authActions = authSlice.actions; // used when we dispatch
 export const authSelector = (state: { auth: AuthState }) => state.auth;
-export type AuthStateType = AuthState;
+export type AuthStateType = AuthState; // useDispatch<RootState, AuthStateTyp>
 export type AuthActionsType = typeof authSlice.actions;

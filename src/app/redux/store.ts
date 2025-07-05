@@ -1,9 +1,10 @@
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import { useDispatch } from "./../../../node_modules/react-redux/src/hooks/useDispatch";
 import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./features/auth";
-
-import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import { customerReducer } from "./features/customers";
 import { persistStore, persistReducer } from "redux-persist";
+import { productReducer } from "./features/products";
 
 const persistConfig = {
   key: "root",
@@ -15,7 +16,10 @@ const persistedReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: {
     auth: persistedReducer, // Use the persisted reducer for auth state
+    customers: customerReducer, // Regular reducer for customers state
+    products: productReducer, // Regular reducer for products state
   },
+
   devTools: true,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -12,11 +12,10 @@ export default function useAuth() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/auth/login");
-    } else {
-      navigate("/");
+      console.log("User is not authenticated, redirecting to sign-in page");
+      navigate("/auth/sign-in");
     }
-  });
+  }, [isAuthenticated]);
 
   return { user, isAuthenticated };
 }

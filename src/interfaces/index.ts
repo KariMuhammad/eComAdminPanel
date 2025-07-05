@@ -8,6 +8,15 @@ export interface CommonState {
   message: null | string;
 }
 
+export interface Pagination {
+  count: number;
+  limit: number;
+  nextPage: number | null;
+  page: number;
+  prevPage: number | null;
+  totalCount: number;
+}
+
 export interface LoginSchema {
   email: string;
   password: string;

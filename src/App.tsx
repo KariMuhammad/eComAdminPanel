@@ -17,6 +17,7 @@ import AddColor from "./pages/colors/add-color";
 import AddCategory from "./pages/categories/add-category";
 import AddBrand from "./pages/brands/add-brand";
 import AddProduct from "./pages/products/add-product";
+import CustomersList from "./pages/customers/customers-list";
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
           <Route path="/add-blog/upload-image" element={<UploadImageBlog />} />
           {/* <Route path="/blogs-categories" element={} /> */}
           {/* <Route path="/orders" element={} /> */}
-          {/* <Route path="/customers" element={} /> */}
+          <Route path="/customers" element={<CustomersList />} />
         </Route>
 
         <Route path="/auth" element={<AuthLayout />}>

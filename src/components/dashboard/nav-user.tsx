@@ -36,6 +36,10 @@ export function NavUser({
   console.log("NavUser rendered with user:", user);
   const { isMobile } = useSidebar();
 
+  if (!user) {
+    return null; // or a loading state, or a message indicating no user is logged in
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>

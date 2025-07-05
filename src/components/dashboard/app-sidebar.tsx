@@ -35,7 +35,7 @@ const data = {
   navMain: [
     {
       title: "Customers",
-      url: "/",
+      url: "/customers",
       icon: IconUsers,
     },
     {
@@ -82,17 +82,17 @@ const data = {
     },
     {
       title: "Orders",
-      url: "#",
+      url: "/orders",
       icon: IconChartBar,
     },
     {
       title: "Blogs",
-      url: "#",
+      url: "/blogs",
       icon: IconFolder,
     },
     {
       title: "Enquiries",
-      url: "#",
+      url: "/enquiries",
       icon: IconReport,
     },
   ] as SidebarMenuItemType[],
@@ -167,6 +167,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
+
+  console.log("AppSidebar rendered with user:", user);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>

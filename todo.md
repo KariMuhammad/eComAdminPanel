@@ -45,3 +45,22 @@
   - [ ] Edit existing gallery item
   - [ ] Delete gallery item
   - [ ] Gallery image upload functionality
+
+## Today
+
+### List Pages
+
+- Brands List [ ]
+- Categories List [ ]
+- Colors List [ ]
+- Products List [x]
+- Gallery List [ ]
+
+### CRUD Operations
+
+- Brands CRUD [ ]
+- Categories CRUD [ ]
+- Colors CRUD [ ]
+- Products CRUD [x]
+- Gallery CRUD [ ]
+- Product Image Upload [ ]
