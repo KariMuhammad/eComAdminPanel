@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/auth-data";
 import { useAppDispatch } from "@/app/redux/store";
 import { login } from "@/app/redux/features/auth";
+import type { LoginSchema } from "@/interfaces";
 
 export default function LoginForm({
   className,
@@ -31,7 +32,7 @@ export default function LoginForm({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: LoginSchema) => {
     if (Object.keys(errors).length > 0) {
       // wont be executed at all, // because zodResolver will handle validation
       console.error("Form has errors:", errors);

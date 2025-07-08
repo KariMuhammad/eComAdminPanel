@@ -14,6 +14,7 @@ export default function ProductsListPage() {
   const { products } = useSelector<RootState, ProductState>(
     (state) => state.products
   );
+
   const { user } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -28,7 +29,7 @@ export default function ProductsListPage() {
       <ListPage<Product>
         title="Products"
         buttonLabel="Add Product"
-        buttonUrl="add-product"
+        buttonUrl="add/basic-info"
         onClickButton={() => alert("Open Add Product Modal")}
         columns={["#", "image", "name", "price", "actions"]}
         data={products}

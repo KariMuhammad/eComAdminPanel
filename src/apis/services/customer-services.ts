@@ -1,9 +1,8 @@
-import { API_BASE_URL } from "@/constants";
 import { axiosInstance } from "@/apis";
 
 export const fetchCustomers = async (token: string) => {
   try {
-    const response = await axiosInstance.get(API_BASE_URL + "/users", {
+    const response = await axiosInstance.get("/users", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

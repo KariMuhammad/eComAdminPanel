@@ -64,3 +64,9 @@
 - Products CRUD [x]
 - Gallery CRUD [ ]
 - Product Image Upload [ ]
+
+#
+
+1- Get all features
+2- Redirect auth
+3- Working on add products (validations, ...)

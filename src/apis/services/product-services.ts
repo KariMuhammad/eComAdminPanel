@@ -1,9 +1,9 @@
 import { axiosInstance } from "@/apis";
-import { API_BASE_URL } from "@/constants";
+import type { Product } from "@/types/product";
 
 export const fetchProducts = async (token: string) => {
   try {
-    const response = await axiosInstance.get(API_BASE_URL + "/products", {
+    const response = await axiosInstance.get("/products", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -22,4 +22,14 @@ export const fetchProducts = async (token: string) => {
       error instanceof Error ? error.message : "Failed to fetch products"
     );
   }
+};
+
+export const createProduct = async (data: Product, token: string) => {
+  const response = await axiosInstance.post("/products", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.product;
 };

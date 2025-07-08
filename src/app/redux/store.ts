@@ -5,6 +5,9 @@ import { authReducer } from "./features/auth";
 import { customerReducer } from "./features/customers";
 import { persistStore, persistReducer } from "redux-persist";
 import { productReducer } from "./features/products";
+import { categoryReducer } from "./features/categories";
+import { brandReducer } from "./features/brands";
+import { orderReducer } from "./features/orders";
 
 const persistConfig = {
   key: "root",
@@ -18,6 +21,9 @@ const store = configureStore({
     auth: persistedReducer, // Use the persisted reducer for auth state
     customers: customerReducer, // Regular reducer for customers state
     products: productReducer, // Regular reducer for products state
+    categories: categoryReducer,
+    brands: brandReducer,
+    orders: orderReducer,
   },
 
   devTools: true,

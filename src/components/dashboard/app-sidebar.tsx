@@ -89,6 +89,16 @@ const data = {
       title: "Blogs",
       url: "/blogs",
       icon: IconFolder,
+      items: [
+        {
+          title: "Blog List",
+          url: "/blogs",
+        },
+        {
+          title: "Add Blog",
+          url: "/add-blog",
+        },
+      ],
     },
     {
       title: "Enquiries",

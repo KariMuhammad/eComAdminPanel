@@ -1,8 +1,11 @@
 import axios from "axios";
 import store from "@/app/redux/store";
 import { authActions } from "@/app/redux/features/auth";
+import { API_BASE_URL } from "@/constants";
 
-export const axiosInstance = axios.create();
+export const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+});
 
 axiosInstance.interceptors.response.use(
   (response) => response,
