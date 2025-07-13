@@ -29,7 +29,7 @@ export default function AddProductInfo() {
   const dispatch = useDispatch<AppDispatch>();
 
   // Get Data From Context
-  const { form, setForm, formMethods, images, setImages, imageUrls, setImageUrls } = useProductCreation();
+  const { formMethods } = useProductCreation();
   const {
     register,
     formState: { errors },
@@ -37,28 +37,24 @@ export default function AddProductInfo() {
     setValue,
   } = formMethods;
 
-  console.log("Form Values", getValues());
-  console.log("Form State", form);
 
-  const [tags, setTags] = useState<string[]>(() => form.tags || [""]);
-  const [colors, setColors] = useState<Array<{ name: string, hexCode: string, quantity: number }>>(() => {
-    return form.colors ?? [{ name: "", hexCode: "", quantity: 1 }]
-  });
+  const form = getValues();
+  console.log("Errors in Validation", errors)
+
+  const { images, colors, tags } = form;
+  const imagesUrl = images.map((imageFile) => URL.createObjectURL(imageFile));
+
+  console.log("Form Values", form);
 
   const handleChange = (key: string, value: any) => {
     setValue(key as any, value);
-    setForm({ ...form, [key]: value });
   };
 
+  // Fetch Categories & Brands
   useEffect(() => {
     if (!categories.length) dispatch(fetchCategories());
     if (!brands.length) dispatch(fetchBrands());
   }, []);
-
-
-
-  console.log("Images", images);
-  console.log("Form values", getValues());
 
   return (
     <>
@@ -128,39 +124,24 @@ export default function AddProductInfo() {
 
       <div className="space-y-2">
         <Label>Images</Label>
-        {images.map((file, idx) => (
+        {form.images.map((file, idx) => (
           <div key={idx} className="flex items-center gap-2 mb-1">
             <Input
               onChange={(e) => {
                 const newFile = e.target.files?.[0];
                 if (!newFile) return;
-
-                // Create preview URL
-                const url = URL.createObjectURL(newFile);
-
                 // Update files array
                 const newImages = [...images];
                 newImages[idx] = newFile;
-                setImages(newImages);
-
-                // Update preview URLs
-                const newImageUrls = [...imageUrls];
-                newImageUrls[idx] = url;
-                setImageUrls(newImageUrls);
-
-                // Just to make validation on inputs
-                setValue(`images.${idx}`, url)
-                setForm({ ...form, images: [...form.images, url] })
-                // For form submission, you'll need to handle files separately
-                // Don't set files in form - handle them during submission
+                setValue("images", newImages);
               }}
               type="file"
               accept="image/*"
               className="w-full"
             />
-            {imageUrls[idx] && (
+            {imagesUrl[idx] && (
               <img
-                src={imageUrls[idx]}
+                src={imagesUrl[idx]}
                 alt={`Preview ${idx + 1}`}
                 className="w-16 h-16 object-cover rounded border"
               />
@@ -173,9 +154,7 @@ export default function AddProductInfo() {
                 variant="ghost"
                 onClick={() => {
                   const newImages = images.filter((_, i) => i !== idx);
-                  const newImageUrls = imageUrls.filter((_, i) => i !== idx);
-                  setImages(newImages);
-                  setImageUrls(newImageUrls);
+                  setValue("images", newImages);
                 }}
               >
                 <X size={16} />
@@ -189,9 +168,7 @@ export default function AddProductInfo() {
           size="sm"
           onClick={() => {
             const newImages = [...images, new File([], "")];
-            const newImageUrls = [...imageUrls, ""];
-            setImages(newImages);
-            setImageUrls(newImageUrls);
+            setValue("images", newImages);
           }}
         >
           <Plus size={16} className="mr-1" /> Add Image
@@ -212,11 +189,8 @@ export default function AddProductInfo() {
                 const newColors = [...colors];
                 // Current Color Object
                 newColors[idx] = { ...newColors[idx], name: e.target.value };
-                // All Colors created for Product
-                setColors(newColors);
 
                 setValue("colors", newColors);
-                setForm({ ...form, colors: newColors })
               }}
               placeholder="Name"
               className="w-1/3"
@@ -226,10 +200,8 @@ export default function AddProductInfo() {
               onChange={(e) => {
                 const newColors = [...colors];
                 newColors[idx] = { ...newColors[idx], hexCode: e.target.value };
-                setColors(newColors);
 
                 setValue("colors", newColors);
-                setForm({ ...form, colors: newColors })
               }}
               type="color"
               className="w-12 h-10 p-0"
@@ -239,10 +211,8 @@ export default function AddProductInfo() {
               onChange={(e) => {
                 const newColors = [...colors];
                 newColors[idx] = { ...newColors[idx], quantity: +e.target.value };
-                setColors(newColors);
 
                 setValue("colors", newColors);
-                setForm({ ...form, colors: newColors })
               }}
               placeholder="Quantity"
               type="number"
@@ -255,7 +225,6 @@ export default function AddProductInfo() {
                 variant="ghost"
                 onClick={() => {
                   const newColors = colors.filter((_, i) => i !== idx);
-                  setColors(newColors);
                   setValue("colors", newColors);
                 }}
               >
@@ -270,7 +239,6 @@ export default function AddProductInfo() {
           size="sm"
           onClick={() => {
             const newColors = [...colors, { name: "", hexCode: "", quantity: 1 }];
-            setColors(newColors);
             setValue("colors", newColors);
           }}
         >
@@ -303,7 +271,6 @@ export default function AddProductInfo() {
               onChange={(e) => {
                 const newTags = [...tags];
                 newTags[idx] = e.target.value;
-                setTags(newTags);
                 setValue("tags", newTags);
               }}
               placeholder="Tag"
@@ -315,7 +282,6 @@ export default function AddProductInfo() {
                 variant="ghost"
                 onClick={() => {
                   const newTags = tags.filter((_, i) => i !== idx);
-                  setTags(newTags);
                   setValue("tags", newTags);
                 }}
               >
@@ -330,7 +296,6 @@ export default function AddProductInfo() {
           size="sm"
           onClick={() => {
             const newTags = [...tags, ""];
-            setTags(newTags);
             setValue("tags", newTags);
           }}
         >

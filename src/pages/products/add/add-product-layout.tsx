@@ -6,8 +6,6 @@ import { createProduct, getSingleProductBySlug } from "@/apis/services/product-s
 import useAuth from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/redux/store";
 
 type AddProductFormProps = {
   mode?: "create" | "edit"
@@ -16,31 +14,36 @@ type AddProductFormProps = {
 function AddProductForm({ mode = "create" }: AddProductFormProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { formMethods: { handleSubmit, formState: { errors, isValid } }, images } = useProductCreation();
+  const { formMethods: { watch, getValues, handleSubmit, formState: { errors, isValid } } } = useProductCreation();
+  watch();
+  const form = getValues();
 
   // Preq for Edit
   const { slug } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
 
   const onSubmit = async (data: any) => {
     console.log("Form submitted:", data);
-    console.log("Files to upload:", images);
+    // console.log("Files to upload:", images);
 
     // Create FormData for file upload
     const formData = new FormData();
 
+    form.tags.forEach((tag) => formData.append("tags", tag))
+    form.images.forEach((image) => formData.append("images", image))
+
     // Add files
-    images.forEach((file, index) => {
-      if (file && file.size > 0) {
-        formData.append('images', file);
-      }
-    });
+    // images.forEach((file, index) => {
+    //   if (file && file.size > 0) {
+    //     formData.append('images', file);
+    //   }
+    // });
 
     // Add other form data
     Object.keys(data).forEach(key => {
-      if (key === 'images') return;
+      if (key === "tags" || key === "images") return;
 
-      if (key === 'tags' || key === "colors") {
+      if (key === "colors") {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         formData.append(key, data[key]);
@@ -65,13 +68,15 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
 
   useEffect(() => {
     if (slug && mode === "edit") {
-      dispatch(getSingleProductBySlug(slug, user?.token!))
+      getSingleProductBySlug(slug, user?.token!).then(data => {
+
+      })
     }
   }, [])
 
   return (
     <form
-      className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow space-y-6"
+      className="max-w-2xl h-full mx-auto p-6 bg-white rounded-lg shadow space-y-6"
       onSubmit={handleSubmit(onSubmit, onError)}
     >
       <h2 className="text-2xl font-bold mb-4">{mode === "create" ? "Add New Product" : "Edit Product"}</h2>

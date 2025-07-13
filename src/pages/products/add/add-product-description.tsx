@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 
 import "react-quill/dist/quill.snow.css";
 export default function AddPoductDescription() {
-  const { form, formMethods: { control, formState: { errors } } } = useProductCreation();
+  const { formMethods: { control, getValues, formState: { errors } } } = useProductCreation();
+  const form = getValues();
   console.log(form);
+
   return (
-    <div className="h-screen">
+    <div className="">
       <CreateProductStepsComponent currentStep={1} />
       <div className="space-y-2">
         <Label>Description</Label>

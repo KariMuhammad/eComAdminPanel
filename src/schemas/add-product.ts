@@ -24,8 +24,12 @@ export const addProductSchema = z.object({
   }),
 
   images: z
-    .array(z.string().url({ message: "URL is not valid!" }))
-    .min(1, { message: "You must upload one image at least!" }),
+    .array(z.any()) // Accept any type for files
+    .min(1, { message: "You must upload one image at least!" })
+    .refine((files) => {
+      // Custom validation for files
+      return files.every((file) => file instanceof File);
+    }, { message: "All items must be valid files or URLs" }),
 
   colors: z.array(
     z.object({
