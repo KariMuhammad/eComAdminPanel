@@ -21,10 +21,9 @@ import CategoryList from "./pages/categories/category-list";
 import BrandList from "./pages/brands/brand-list";
 import BlogList from "./pages/blog/blog-list";
 import OrdersList from "./pages/orders/orders-list";
-import AddProductLayout from "./pages/products/add/AddProductLayout";
+import AddProductLayout from "./pages/products/add/add-product-layout";
 import AddProductInfo from "./pages/products/add/add-product-info";
 import AddPoductDescription from "./pages/products/add/add-product-description";
-import AddProductShipping from "./pages/products/add/add-product-shipping";
 
 function App() {
   return (
@@ -42,7 +41,7 @@ function App() {
                 path="full-description"
                 element={<AddPoductDescription />}
               />
-              <Route path="shipping" element={<AddProductShipping />} />
+              {/* <Route path="shipping" element={<AddProductShipping />} /> */}
             </Route>
           </Route>
           {/* ---------------- ./Products Routes ----------------  */}

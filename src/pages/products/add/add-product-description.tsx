@@ -1,20 +1,32 @@
+import ErrorMessage from "@/components/shared/error-message";
 import { CreateProductStepsComponent } from "@/constants/create-product-steps";
 import useProductCreation from "@/hooks/use-product-creation";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Controller } from "react-hook-form";
+import { Label } from "@/components/ui/label";
 
+import "react-quill/dist/quill.snow.css";
 export default function AddPoductDescription() {
-  const { form } = useProductCreation();
+  const { form, formMethods: { control, formState: { errors } } } = useProductCreation();
   console.log(form);
   return (
     <div className="h-screen">
-      <h2 className="text-2xl font-bold mb-4">
-        Add Full Description for product
-      </h2>
-
       <CreateProductStepsComponent currentStep={1} />
-
-      <ReactQuill className="h-1/2" />
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <ReactQuill
+              className="h-1/2"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <ErrorMessage message={errors.description?.message} />
+      </div>
     </div>
   );
 }

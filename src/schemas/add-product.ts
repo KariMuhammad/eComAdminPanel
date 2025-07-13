@@ -24,17 +24,14 @@ export const addProductSchema = z.object({
   }),
 
   images: z
-    .array(
-      z.object({
-        url: z.string().url({ message: "URL is not valid!" }),
-      })
-    )
-    .nonempty({ message: "You must upload one image at least!" }),
+    .array(z.string().url({ message: "URL is not valid!" }))
+    .min(1, { message: "You must upload one image at least!" }),
 
   colors: z.array(
     z.object({
-      name: z.string(),
-      color: z.string(),
+      name: z.string().nonempty({ message: "name is required!" }),
+      hexCode: z.string().nonempty({ message: "hexCode is required!" }),
+      quantity: z.coerce.number().gt(0),
     }),
     {
       message: "you must select one color at least!",
@@ -45,8 +42,7 @@ export const addProductSchema = z.object({
     .number({ message: "quantity should enter numerical value >= 1" })
     .gte(1, {
       message: "quantity must be 1 at least!",
-    })
-    .default(1),
+    }),
 
-  tags: z.array(z.string(), { message: "you must select one tag at least!" }),
+  tags: z.array(z.string().nonempty({ message: "you must select one tag at least!" })).min(1, { message: "You must register one tag at least"})
 });

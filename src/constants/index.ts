@@ -6,10 +6,10 @@ export const ADD_PRODUCT_INITIAL_STATE = {
   description: "",
   name: "",
   price: 0,
-  quantity: 0,
-  tags: [{ text: "" }],
-  images: [{ url: "" }],
-  colors: [{ hexCode: "", name: "", quantity: 0 }],
+  quantity: 1,
+  tags: [],
+  images: [],
+  colors: [{ hexCode: "", name: "", quantity: 1 }],
 };
 
 export const createProductSteps = [

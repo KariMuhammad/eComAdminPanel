@@ -3,6 +3,7 @@ import * as brandServices from "@/apis/services/brand-services";
 import type { CommonState } from "@/interfaces";
 
 type Brand = {
+  id: string;
   name: string;
   description: string;
   image: string;
@@ -43,7 +44,11 @@ export const brandSlice = createSlice({
     });
 
     builder.addCase(fetchBrands.fulfilled, (state, action) => {
-      state.brands = action.payload;
+      // Transform _id to id
+      state.brands = action.payload.map((brand: any) => ({
+        ...brand,
+        id: brand._id,
+      }));
       state.loading = false;
       state.error = null;
       state.message = "Fetch brands is done.";

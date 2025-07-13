@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 // pages/ProductsPage.tsx
 import {
   fetchProducts,
@@ -7,22 +9,24 @@ import type { AppDispatch, RootState } from "@/app/redux/store";
 import useAuth from "@/hooks/use-auth";
 import ListPage from "@/layouts/page-list";
 import type { Product } from "@/types/product";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function ProductsListPage() {
-  const { products } = useSelector<RootState, ProductState>(
-    (state) => state.products
-  );
-
+  const dispatch = useDispatch();
   const { user } = useAuth();
-  const dispatch = useDispatch<AppDispatch>();
+  const { products, pagination } = useSelector((state: RootState) => state.products);
 
-  console.log("ProductsListPage", products);
+  // Local state for current page
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchProducts(user!.token));
-  }, []);
+    if (user?.token) {
+      dispatch(fetchProducts({ token: user.token, page }) as any);
+    }
+  }, [dispatch, user, page]);
+
+  if (!pagination) return null;
 
   return (
     <div className="h-full">
@@ -30,7 +34,6 @@ export default function ProductsListPage() {
         title="Products"
         buttonLabel="Add Product"
         buttonUrl="add/basic-info"
-        onClickButton={() => alert("Open Add Product Modal")}
         columns={["#", "image", "name", "price", "actions"]}
         data={products}
         renderRow={(product, index) => (
@@ -47,7 +50,7 @@ export default function ProductsListPage() {
             <td className="px-4 py-2">${product.price.toFixed(2)}</td>
             <td className="px-4 py-2">
               <button className="bg-blue-600 text-white py-1 px-2 rounded-md hover:bg-blue-700 mr-2">
-                Edit
+                <Link to={`/products/edit/${product.slug}`}>Edit</Link>
               </button>
               <button className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700">
                 Delete
@@ -56,6 +59,24 @@ export default function ProductsListPage() {
           </tr>
         )}
       />
+      {/* Pagination Controls */}
+      <div className="flex justify-end items-center gap-2 mt-7">
+        <Button
+          disabled={!pagination.prevPage}
+          className="bg-black text-white"
+          onClick={() => setPage(pagination?.prevPage ?? 1)}
+        >
+          Previous
+        </Button>
+        <span className="mx-3x">Page {pagination.page}</span>
+        <Button
+          disabled={!pagination.nextPage}
+          className="bg-black text-white"
+          onClick={() => setPage(pagination?.nextPage ?? 1)}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

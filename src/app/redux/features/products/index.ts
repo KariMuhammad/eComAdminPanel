@@ -19,9 +19,9 @@ const initialState: ProductState = {
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  (token: string, thunkAPI) => {
+  ({token, page = 1, limit = 3}: { token: string; page?: number; limit?: number }, thunkAPI) => {
     try {
-      const response = productServices.fetchProducts(token);
+      const response = productServices.fetchProducts(token, page, limit);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -34,7 +34,11 @@ export const fetchProducts = createAsyncThunk(
 export const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    append: (state, action) => {
+      state.products.push(action.payload);
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
       state.loading = true;

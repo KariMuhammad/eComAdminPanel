@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 const MainLayout: React.FC = () => {
   return (
     <AuthProvider>
-      <div className="flex h-screen">
+      <div className="flex min-h-screen">
         <Sidebar>
           <Outlet />
           <footer className="px-2 py-1 text-center bg-black text-white">

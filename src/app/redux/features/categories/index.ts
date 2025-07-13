@@ -54,7 +54,11 @@ export const categorySlice = createSlice({
     });
 
     builder.addCase(fetchCategories.fulfilled, (state, action) => {
-      state.categories = action.payload;
+      // Transform _id to id
+      state.categories = action.payload.map((category: any) => ({
+        ...category,
+        id: category._id,
+      }));
       state.error = null;
       state.loading = false;
       state.message = "Fetch categories is done!";
