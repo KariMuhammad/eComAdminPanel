@@ -112,3 +112,6 @@ app.post('/upload', upload.array('images'), (req, res) => {
 ---
 
 Let me know if you're using a different backend (like Laravel, Flask, etc.), and I’ll adjust the parsing guide for you.
+
+
+image.png

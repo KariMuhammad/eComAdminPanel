@@ -2,12 +2,17 @@ import { useRef, useState } from "react";
 
 import Editor from "@/components/blog/editor";
 import { CreateBlogStepsComponent } from "@/constants/create-blog-steps";
+import { useSelector } from "react-redux";
+import { type RootState } from "@/app/redux/store";
+import type { BlogCategoryState } from "@/app/redux/features/blog-categories";
 
 export default function AddBlog() {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   //   const [content, setContent] = useState<string>("");
+
+  const { blogCategories } = useSelector<RootState, BlogCategoryState>((state) => state.blogCategories);
 
   const QuillRef = useRef(null);
 
@@ -57,11 +62,9 @@ export default function AddBlog() {
             name="category"
             className="mt-1 p-2 w-fit block bg-white border-gray-300 rounded-md shadow-sm outline-none"
           >
+
             <option value="">Select a category</option>
-            <option value="technology">Technology</option>
-            <option value="lifestyle">Lifestyle</option>
-            <option value="health">Health</option>
-            <option value="travel">Travel</option>
+            {blogCategories.map((blogCategory) => <option value={blogCategory.id}>{blogCategory.name}</option>)}
           </select>
         </div>
         {/* ./category input */}

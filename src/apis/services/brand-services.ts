@@ -10,3 +10,19 @@ export const fetchBrands = async () => {
     );
   }
 };
+
+export const createBrand = async (data: any, token: string) => {
+  try {
+    const response = await axiosInstance.post(`/brands`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }) 
+
+    return response.data;
+  } catch (error) {
+    const message = error instanceof Error? error.message: error as any;
+    console.log(message);
+    throw new Error(message || "Failed to create brand");
+  }
+}

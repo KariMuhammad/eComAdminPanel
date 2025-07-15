@@ -8,6 +8,7 @@ import { productReducer } from "./features/products";
 import { categoryReducer } from "./features/categories";
 import { brandReducer } from "./features/brands";
 import { orderReducer } from "./features/orders";
+import { blogCategoryReducer } from "./features/blog-categories";
 
 const persistConfig = {
   key: "root",
@@ -24,6 +25,7 @@ const store = configureStore({
     categories: categoryReducer,
     brands: brandReducer,
     orders: orderReducer,
+    blogCategories: blogCategoryReducer,
   },
 
   devTools: true,

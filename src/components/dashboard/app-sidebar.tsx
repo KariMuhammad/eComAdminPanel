@@ -58,11 +58,11 @@ const data = {
           url: "/categories",
           icon: IconFolder,
         },
-        {
-          title: "Colors",
-          url: "/colors",
-          icon: Circle,
-        },
+        // {
+        //   title: "Colors",
+        //   url: "/colors",
+        //   icon: Circle,
+        // },
       ],
     },
     {
@@ -90,6 +90,10 @@ const data = {
       url: "/blogs",
       icon: IconFolder,
       items: [
+        {
+          title: "Blog Categories",
+          url: "/blog-category",
+        },
         {
           title: "Blog List",
           url: "/blogs",
@@ -200,7 +204,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary
+          items={data.navSecondary
+            .filter(item => !!item.icon)
+            .map(item => ({ ...item, icon: item.icon! }))
+          }
+          className="mt-auto"
+        />
       </SidebarContent>
 
       <SidebarFooter>

@@ -30,7 +30,7 @@ export default function BrandList() {
           <td>{index}</td>
           <td>{brand.image}</td>
           <td>{brand.name}</td>
-          <td>{brand.description}</td>
+          <td><div dangerouslySetInnerHTML={{ __html: brand.description }} /></td>
         </tr>
       )}
     />

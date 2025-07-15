@@ -30,7 +30,9 @@ export default function CategoryList() {
       renderRow={(category, index) => (
         <tr key={index}>
           <td>{index}</td>
-          <td>{category.image}</td>
+          <td>
+            <img className="w-16 object-contain" src={category.image} />
+          </td>
           <td>{category.name}</td>
           <td>{category.description}</td>
           <td>{category.count}</td>

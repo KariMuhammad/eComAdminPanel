@@ -1,79 +1,98 @@
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthLayout, MainLayout } from "./layouts";
 
-import Dasboard from "./pages/dashboard";
-import {
-  LoginPage,
-  RegisterPage,
-  ForgotPasswordPage,
-  ResetPasswordPage,
-} from "./pages/auth";
+const MainLayout = lazy(() => import("./layouts/MainLayout"));
+const AuthLayout = lazy(() => import("./layouts/AuthLayout"));
+const Dashboard = lazy(() => import("./pages/dashboard"));
+const ProductsListPage = lazy(() => import("./pages/products/products-list"));
+const AddBlog = lazy(() => import("./pages/blog/add-blog"));
+const UploadImageBlog = lazy(() => import("./pages/blog/upload-image-blog"));
+const AddCategory = lazy(() => import("./pages/categories/add-category"));
+const AddBrand = lazy(() => import("./pages/brands/add-brand"));
+const CustomersList = lazy(() => import("./pages/customers/customers-list"));
+const CategoryList = lazy(() => import("./pages/categories/category-list"));
+const BrandList = lazy(() => import("./pages/brands/brand-list"));
+const BlogList = lazy(() => import("./pages/blog/blog-list"));
+const OrdersList = lazy(() => import("./pages/orders/orders-list"));
+const AddProductLayout = lazy(() => import("./pages/products/add/add-product-layout"));
+const AddProductInfo = lazy(() => import("./pages/products/add/add-product-info"));
+const AddPoductDescription = lazy(() => import("./pages/products/add/add-product-description"));
+const LoginPage = lazy(() => import("./pages/auth/sign-in"));
+const RegisterPage = lazy(() => import("./pages/auth/sign-up"));
+const ForgotPasswordPage = lazy(() => import("./pages/auth/forgot-password"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/reset-password"));
+import PageLoader from "./shared/PageLoader";
 
 import "./App.css";
-import ProductsListPage from "./pages/products/products-list";
-import AddBlog from "./pages/blog/add-blog";
-import UploadImageBlog from "./pages/blog/upload-image-blog";
-import AddColor from "./pages/colors/add-color";
-import AddCategory from "./pages/categories/add-category";
-import AddBrand from "./pages/brands/add-brand";
-import CustomersList from "./pages/customers/customers-list";
-import CategoryList from "./pages/categories/category-list";
-import BrandList from "./pages/brands/brand-list";
-import BlogList from "./pages/blog/blog-list";
-import OrdersList from "./pages/orders/orders-list";
-import AddProductLayout from "./pages/products/add/add-product-layout";
-import AddProductInfo from "./pages/products/add/add-product-info";
-import AddPoductDescription from "./pages/products/add/add-product-description";
-
+import AddBlogCategory from "./pages/categories/add-blog-category";
+import BlogCategoryList from "./pages/categories/blog-category-list";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Dasboard />} />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Dashboard />} />
 
-          {/* ---------------- Products Routes ----------------  */}
-          <Route path="/products">
-            <Route index element={<ProductsListPage />} />
-            <Route path="add" element={<AddProductLayout />}>
-              <Route path="basic-info" element={<AddProductInfo />} />
-              <Route
-                path="full-description"
-                element={<AddPoductDescription />}
-              />
-              {/* <Route path="shipping" element={<AddProductShipping />} /> */}
+            {/* ---------------- Products Routes ----------------  */}
+            <Route path="/products">
+              <Route index element={<ProductsListPage />} />
+              <Route path="add" element={<AddProductLayout />}>
+                <Route path="basic-info" element={<AddProductInfo />} />
+                <Route
+                  path="full-description"
+                  element={<AddPoductDescription />}
+                />
+                {/* <Route path="shipping" element={<AddProductShipping />} /> */}
+              </Route>
             </Route>
+            {/* ---------------- ./Products Routes ----------------  */}
+
+            {/* <Route path="/gallery/add-image" element={<ِAddImageInGalleryUser />} */}
+
+            {/* ---------------- Categories Routes ---------------- */}
+            <Route path="/categories" element={<CategoryList />} />
+            <Route path="/categories/add" element={<AddCategory />} />
+            {/* ---------------- ./Categories Routes ---------------- */}
+
+            {/* ---------------- Brands Routes ---------------- */}
+            <Route path="/brands" element={<BrandList />} />
+            <Route path="/brands/add" element={<AddBrand />} />
+            {/* ---------------- ./Brands Routes ---------------- */}
+
+            {/* ---------------- Colors Routes ---------------- */}
+            {/* ---------------- ./Colors Routes ---------------- */}
+
+            {/* ---------------- Blogs Routes ---------------- */}
+            {/* ---------------- - Blog Category ---------------- */}
+            <Route path="/blog-category" element={<BlogCategoryList />} />
+            <Route path="/blog-category/add" element={<AddBlogCategory />} />
+            {/* ---------------- - ./Blog Category ---------------- */}
+            <Route path="/blogs" element={<BlogList />} />
+            <Route path="/add-blog" element={<AddBlog />} />
+            <Route path="/add-blog/upload-image" element={<UploadImageBlog />} />
+            {/* ---------------- ./Blogs Routes ---------------- */}
+
+
+            <Route path="/orders" element={<OrdersList />} />
+            <Route path="/customers" element={<CustomersList />} />
           </Route>
-          {/* ---------------- ./Products Routes ----------------  */}
 
-          {/* <Route path="/gallery/add-image" element={<ِAddImageInGalleryUser />} */}
+          {/* ---------------- ./Auth Routes ---------------- */}
+          <Route path="/auth" element={<AuthLayout />}>
+            <Route path="/auth/sign-in" element={<LoginPage />} />
+            <Route path="/auth/sign-up" element={<RegisterPage />} />
+            <Route
+              path="/auth/forgot-password"
+              element={<ForgotPasswordPage />}
+            />
+            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+          </Route>
+          {/* ---------------- ./Auth Routes ---------------- */}
 
-          <Route path="/categories" element={<CategoryList />} />
-          <Route path="/categories/add" element={<AddCategory />} />
-          <Route path="/brands" element={<BrandList />} />
-          <Route path="/brands/add" element={<AddBrand />} />
-          {/* <Route path="/colors" element={} /> */}
-          <Route path="/colors/add" element={<AddColor />} />
-          <Route path="/blogs" element={<BlogList />} />
-          <Route path="/add-blog" element={<AddBlog />} />
-          <Route path="/add-blog/upload-image" element={<UploadImageBlog />} />
-          {/* <Route path="/blogs-categories" element={} /> */}
-          <Route path="/orders" element={<OrdersList />} />
-          <Route path="/customers" element={<CustomersList />} />
-        </Route>
-
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route path="/auth/sign-in" element={<LoginPage />} />
-          <Route path="/auth/sign-up" element={<RegisterPage />} />
-          <Route
-            path="/auth/forgot-password"
-            element={<ForgotPasswordPage />}
-          />
-          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-        </Route>
-
-        <Route path="/settings" element={<div>Settings Page</div>} />
-      </Routes>
+          <Route path="/settings" element={<div>Settings Page</div>} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
