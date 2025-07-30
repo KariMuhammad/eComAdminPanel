@@ -14,7 +14,7 @@ const CategoryList = lazy(() => import("./pages/categories/category-list"));
 const BrandList = lazy(() => import("./pages/brands/brand-list"));
 const BlogList = lazy(() => import("./pages/blog/blog-list"));
 const OrdersList = lazy(() => import("./pages/orders/orders-list"));
-const AddProductLayout = lazy(() => import("./pages/products/add/add-product-layout"));
+const MutationProductLayout = lazy(() => import("./pages/products/add/add-product-layout"));
 const AddProductInfo = lazy(() => import("./pages/products/add/add-product-info"));
 const AddPoductDescription = lazy(() => import("./pages/products/add/add-product-description"));
 const LoginPage = lazy(() => import("./pages/auth/sign-in"));
@@ -23,9 +23,11 @@ const ForgotPasswordPage = lazy(() => import("./pages/auth/forgot-password"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/reset-password"));
 import PageLoader from "./shared/PageLoader";
 
-import "./App.css";
 import AddBlogCategory from "./pages/categories/add-blog-category";
 import BlogCategoryList from "./pages/categories/blog-category-list";
+import CouponList from "./pages/coupons/coupon-list";
+import AddCoupon from "./pages/coupons/add-coupon";
+import "./App.css";
 function App() {
   return (
     <BrowserRouter>
@@ -37,7 +39,15 @@ function App() {
             {/* ---------------- Products Routes ----------------  */}
             <Route path="/products">
               <Route index element={<ProductsListPage />} />
-              <Route path="add" element={<AddProductLayout />}>
+              <Route path="add" element={<MutationProductLayout mode="create" />}>
+                <Route path="basic-info" element={<AddProductInfo />} />
+                <Route
+                  path="full-description"
+                  element={<AddPoductDescription />}
+                />
+                {/* <Route path="shipping" element={<AddProductShipping />} /> */}
+              </Route>
+              <Route path="edit/:slug" element={<MutationProductLayout mode="edit" />}>
                 <Route path="basic-info" element={<AddProductInfo />} />
                 <Route
                   path="full-description"
@@ -59,6 +69,11 @@ function App() {
             <Route path="/brands" element={<BrandList />} />
             <Route path="/brands/add" element={<AddBrand />} />
             {/* ---------------- ./Brands Routes ---------------- */}
+
+            {/* ---------------- Coupons Routes ---------------- */}
+            <Route path="/coupons" element={<CouponList />} />
+            <Route path="/coupons/add" element={<AddCoupon />} />
+            {/* ---------------- ./Coupons Routes ---------------- */}
 
             {/* ---------------- Colors Routes ---------------- */}
             {/* ---------------- ./Colors Routes ---------------- */}

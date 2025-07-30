@@ -28,8 +28,8 @@ export const addProductSchema = z.object({
     .min(1, { message: "You must upload one image at least!" })
     .refine((files) => {
       // Custom validation for files
-      return files.every((file) => file instanceof File);
-    }, { message: "All items must be valid files or URLs" }),
+      return files.every((file) => file instanceof File && file.size > 0);
+    }, { message: "All items must be valid files" }),
 
   colors: z.array(
     z.object({

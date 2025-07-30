@@ -43,7 +43,7 @@ export default function ListPage<T>({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-100 text-gray-700 text-sm">
+              <tr className="bg-gray-100 text-gray-700 text-sm text-center">
                 {columns.map((col, i) => (
                   <th key={i} className="px-4 py-2 border-b">
                     {col}

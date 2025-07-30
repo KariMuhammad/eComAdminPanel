@@ -7,3 +7,8 @@ export type ArrayKeys<T> = {
 
 // ➋ أداة لاستخراج نوع العنصر داخل الـ Array
 export type ElementOf<T> = T extends readonly (infer U)[] ? U : never;
+
+export enum DiscountType {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
+}

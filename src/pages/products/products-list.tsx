@@ -50,7 +50,7 @@ export default function ProductsListPage() {
             <td className="px-4 py-2">${product.price.toFixed(2)}</td>
             <td className="px-4 py-2">
               <button className="bg-blue-600 text-white py-1 px-2 rounded-md hover:bg-blue-700 mr-2">
-                <Link to={`/products/edit/${product.slug}`}>Edit</Link>
+                <Link to={`/products/edit/${product.slug}/basic-info`}>Edit</Link>
               </button>
               <button className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700">
                 Delete

@@ -46,15 +46,35 @@ export const createProduct = async (data: Product | FormData, token: string) => 
   return response.data.data.product;
 };
 
+export const updateProduct = async (id: string, data: Product | FormData, token: string) => {
+  const headers: any = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data"
+  };
+
+  // If data is FormData, don't set Content-Type (browser will set it with boundary)
+  if (!(data instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  const response = await axiosInstance.patch(`/products/${id}`, data, {
+    headers,
+  });
+
+  console.log("Response Data", response.data);
+  // productActions.append(response.data.data.product);
+  return response.data.data.product;
+}
+
 export const getSingleProductBySlug = async (slug: string, token: string) => {
   try {
-    const response = await axiosInstance.get(`/products/${slug}`, {
+    const response = await axiosInstance.get(`/products/s/${slug}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    return response.data;
 
+    return response.data.data.product;
   } catch (error) {
     const message = error instanceof Error? error.message: error as string;
     console.error(message);

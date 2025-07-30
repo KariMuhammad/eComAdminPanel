@@ -13,3 +13,24 @@ export function getFirstLastName(name: string) {
 export function getUsername(first_name: string, last_name: string) {
   return `${first_name} ${last_name}`;
 }
+
+// Function to convert image URL to File object
+export const convertUrlToFile = async (imageUrl: string, filename: string): Promise<File> => {
+  try {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  } catch (error) {
+    console.error('Error converting URL to File:', error);
+    // Return a placeholder file if conversion fails
+    return new File([''], filename, { type: 'image/jpeg' });
+  }
+};
+
+// Function to convert multiple image URLs to File objects
+export const convertUrlsToFiles = async (imageUrls: string[]): Promise<File[]> => {
+  const filePromises = imageUrls.map((url, index) =>
+    convertUrlToFile(url, `image-${index + 1}.jpg`)
+  );
+  return Promise.all(filePromises);
+};

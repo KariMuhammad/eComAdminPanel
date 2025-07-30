@@ -1,18 +1,4 @@
 import * as React from "react";
-import {
-  IconCamera,
-  IconChartBar,
-  IconFileAi,
-  IconFileDescription,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
@@ -26,9 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
 import { Link } from "react-router-dom";
-import { BadgeEuro, Circle, ShoppingBag } from "lucide-react";
+
+import { BadgeEuro, Camera, ChartBar, File, Folder, FolderArchive, HelpCircle, List, ScrollText, Search, Settings, ShoppingBag, Users } from "lucide-react";
 import type { SidebarMenuItemType } from "@/lib/types";
+
 import useAuth from "@/hooks/use-auth";
 
 const data = {
@@ -36,12 +25,12 @@ const data = {
     {
       title: "Customers",
       url: "/customers",
-      icon: IconUsers,
+      icon: Users,
     },
     {
       title: "Catalog",
       url: "#",
-      icon: IconListDetails,
+      icon: List,
       items: [
         {
           title: "Products",
@@ -56,7 +45,7 @@ const data = {
         {
           title: "Categories",
           url: "/categories",
-          icon: IconFolder,
+          icon: FolderArchive,
         },
         // {
         //   title: "Colors",
@@ -66,9 +55,21 @@ const data = {
       ],
     },
     {
+      title: "Merketing",
+      url: "#",
+      icon: List,
+      items: [
+        {
+          title: "Coupons",
+          url: "/coupons",
+          icon: ShoppingBag,
+        },
+      ],
+    },
+    {
       title: "Gallery",
       url: "/gallery",
-      icon: IconCamera,
+      icon: Camera,
       items: [
         {
           title: "Images",
@@ -83,12 +84,12 @@ const data = {
     {
       title: "Orders",
       url: "/orders",
-      icon: IconChartBar,
+      icon: ChartBar,
     },
     {
       title: "Blogs",
       url: "/blogs",
-      icon: IconFolder,
+      icon: Folder,
       items: [
         {
           title: "Blog Categories",
@@ -107,14 +108,14 @@ const data = {
     {
       title: "Enquiries",
       url: "/enquiries",
-      icon: IconReport,
+      icon: ScrollText,
     },
   ] as SidebarMenuItemType[],
 
   navClouds: [
     {
       title: "Capture",
-      icon: IconCamera,
+      icon: Camera,
       url: "#",
       isActive: true,
       items: [
@@ -130,7 +131,7 @@ const data = {
     },
     {
       title: "Proposal",
-      icon: IconFileDescription,
+      icon: File,
       url: "#",
       items: [
         {
@@ -145,7 +146,7 @@ const data = {
     },
     {
       title: "Prompts",
-      icon: IconFileAi,
+      icon: File,
       url: "#",
       items: [
         {
@@ -164,17 +165,17 @@ const data = {
     {
       title: "Settings",
       url: "#",
-      icon: IconSettings,
+      icon: Settings,
     },
     {
       title: "Get Help",
       url: "#",
-      icon: IconHelp,
+      icon: HelpCircle,
     },
     {
       title: "Search",
       url: "#",
-      icon: IconSearch,
+      icon: Search,
     },
   ] as SidebarMenuItemType[],
 };
@@ -194,7 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <Link to="/">
-                <IconInnerShadowTop className="!size-5" />
+                {/* <InnerShadowTop className="!size-5" /> */}
                 <span className="text-base font-semibold">Ecom Admin</span>
               </Link>
             </SidebarMenuButton>
