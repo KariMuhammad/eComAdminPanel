@@ -28,6 +28,7 @@ import BlogCategoryList from "./pages/categories/blog-category-list";
 import CouponList from "./pages/coupons/coupon-list";
 import AddCoupon from "./pages/coupons/add-coupon";
 import "./App.css";
+
 function App() {
   return (
     <BrowserRouter>
@@ -38,7 +39,10 @@ function App() {
 
             {/* ---------------- Products Routes ----------------  */}
             <Route path="/products">
+              {/* List of Products */}
               <Route index element={<ProductsListPage />} />
+
+              {/* Create Product */}
               <Route path="add" element={<MutationProductLayout mode="create" />}>
                 <Route path="basic-info" element={<AddProductInfo />} />
                 <Route
@@ -47,6 +51,8 @@ function App() {
                 />
                 {/* <Route path="shipping" element={<AddProductShipping />} /> */}
               </Route>
+
+              {/* Edit Product */}
               <Route path="edit/:slug" element={<MutationProductLayout mode="edit" />}>
                 <Route path="basic-info" element={<AddProductInfo />} />
                 <Route

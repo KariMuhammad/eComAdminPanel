@@ -2,12 +2,16 @@ import { Button } from "@/components/ui/button";
 import ProductCreationProvider from "@/providers/ProductCreationProvider";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import useProductCreation from "@/hooks/use-product-creation";
-import { createProduct, getSingleProductBySlug, updateProduct } from "@/apis/services/product-services";
+import { createProduct, updateProduct } from "@/app/redux/features/products";
+import productApis from "@/apis/services/product-services";
+
 import useAuth from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import type { Product } from "@/types/product";
-// import { convertUrlsToFiles } from "@/lib/utils";
+import { convertUrlsToFiles } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/app/redux/store";
 
 type AddProductFormProps = {
   mode: "create" | "edit"
@@ -15,23 +19,22 @@ type AddProductFormProps = {
 
 function AddProductForm({ mode = "create" }: AddProductFormProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
   const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
 
   const {
     formMethods: { watch, getValues, setValue, handleSubmit, formState: { errors, isValid } },
     setMode,
-    markFieldAsChanged,
     mode: contextMode,
     isFieldChanged
   } = useProductCreation();
 
-  const form = getValues();
-  watch();
+  const form = getValues(); watch();
 
   // Preq for Edit
   const { slug } = useParams();
-  // const dispatch = useDispatch<AppDispatch>();
 
   // Set mode in context
   useEffect(() => {
@@ -56,20 +59,13 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
 
   const onSubmit = async (data: any) => {
     console.log("Form submitted:", data);
-    // console.log("Files to upload:", images);
+    console.log("Images", form.images)
 
     // Create FormData for file upload
     const formData = new FormData();
 
     form.tags.forEach((tag) => formData.append("tags", tag))
     form.images.forEach((image) => formData.append("images", image))
-
-    // Add files
-    // images.forEach((file, index) => {
-    //   if (file && file.size > 0) {
-    //     formData.append('images', file);
-    //   }
-    // });
 
     // Add other form data
     Object.keys(data).forEach(key => {
@@ -81,17 +77,17 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
         formData.append(key, data[key]);
       }
     });
+    console.log("FormData", formData)
 
     // Handle form submission with FormData
     try {
-      console.log("FormData", formData)
-      if (contextMode === "create") await createProduct(formData, user?.token!);
-      if (contextMode === "edit") await updateProduct(product?.id!, formData, user?.token!);
+      if (contextMode === "create") dispatch(createProduct({ data: formData, token: user?.token! }));
+      if (contextMode === "edit" && product?._id) dispatch(updateProduct({ id: product?._id, updatedData: formData, token: user?.token! }));
 
-      toast("Successfully created product");
+      toast(`Successfully ${mode === "create" ? "created" : "modified"} product`);
       navigate("/products");
     } catch (error) {
-      toast("Failed to create product");
+      toast(`Failed to ${mode === "create" ? "create" : "modify"} product`);
     }
   };
 
@@ -101,8 +97,9 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
   };
 
   useEffect(() => {
-    if (slug && contextMode === "edit") {
-      getSingleProductBySlug(slug, user?.token!).then(async (data: Product) => {
+    console.log("Mode = ", mode)
+    if (slug && mode === "edit") {
+      productApis.getSingleProductBySlug(slug, user?.token!).then(async (data: Product) => {
         setProduct(data);
         console.log("Data", data);
 
@@ -117,20 +114,20 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
         setValue("colors", data.colors || []);
 
 
-        //! No get Old Images to render, to not uploaded many times
+        // ! No get Old Images to render, to not uploaded many times
         // Convert image URLs to File objects and set in form
-        // if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-        //   try {
-        //     const imageFiles = await convertUrlsToFiles(data.images);
-        //     setValue("images", imageFiles);
-        //   } catch (error) {
-        //     console.error('Error converting images:', error);
-        //     // Set empty array if conversion fails
-        //     setValue("images", []);
-        //   }
-        // } else {
-        //   setValue("images", []);
-        // }
+        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+          try {
+            const imageFiles = await convertUrlsToFiles(data.images.map(img => img.url));
+            setValue("images", imageFiles);
+          } catch (error) {
+            console.error('Error converting images:', error);
+            // Set empty array if conversion fails
+            setValue("images", []);
+          }
+        } else {
+          setValue("images", []);
+        }
       })
     }
   }, [])

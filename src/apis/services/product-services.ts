@@ -1,10 +1,9 @@
 import { axiosInstance } from "@/apis";
-import { productActions } from "@/app/redux/features/products";
+import { catchAsyncThunk } from "@/lib/utils";
 import type { Product } from "@/types/product";
-import { toast } from "sonner";
 
-export const fetchProducts = async (token: string, page: number, limit: number) => {
-  try {
+export default {
+  fetch: (token: string, page: number, limit: number) => catchAsyncThunk(async () => {
     const response = await axiosInstance.get(`/products?page=${page}&limit=${limit}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -19,55 +18,65 @@ export const fetchProducts = async (token: string, page: number, limit: number) 
       products,
       pagination,
     };
-  } catch (error) {
-    return Promise.reject(
-      error instanceof Error ? error.message : "Failed to fetch products"
-    );
-  }
-};
+  }),
 
-export const createProduct = async (data: Product | FormData, token: string) => {
-  const headers: any = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "multipart/form-data"
-  };
+  create: (data: Product | FormData, token: string) => catchAsyncThunk(async () => {
+    const headers: any = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"
+    };
 
-  // If data is FormData, don't set Content-Type (browser will set it with boundary)
-  if (!(data instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-  }
+    // If data is FormData, don't set Content-Type (browser will set it with boundary)
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
-  const response = await axiosInstance.post("/products", data, {
-    headers,
-  });
+    const response = await axiosInstance.post("/products", data, {
+      headers,
+    });
 
-  console.log("Response Data", response.data);
-  productActions.append(response.data.data.product);
-  return response.data.data.product;
-};
+    console.log("Response Data", response.data);
 
-export const updateProduct = async (id: string, data: Product | FormData, token: string) => {
-  const headers: any = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "multipart/form-data"
-  };
+    const { product } = response.data.data;
+    return product;
+  }),
 
-  // If data is FormData, don't set Content-Type (browser will set it with boundary)
-  if (!(data instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-  }
+  update: (id: string, data: Product | FormData, token: string) => catchAsyncThunk(async () => {
+    const headers: any = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"
+    };
 
-  const response = await axiosInstance.patch(`/products/${id}`, data, {
-    headers,
-  });
+    // If data is FormData, don't set Content-Type (browser will set it with boundary)
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
-  console.log("Response Data", response.data);
-  // productActions.append(response.data.data.product);
-  return response.data.data.product;
-}
+    const response = await axiosInstance.patch(`/products/${id}`, data, {
+      headers,
+    });
 
-export const getSingleProductBySlug = async (slug: string, token: string) => {
-  try {
+    console.log("Response Data", response.data);
+    // productActions.append(response.data.data.product);
+
+    const { product } = response.data.data;
+    return product;
+  }),
+
+  delete: (id: string, token: string) => catchAsyncThunk(async () => {
+    const headers: any = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"
+    };
+
+    const response = await axiosInstance.delete(`/products/${id}`, {
+      headers
+    })
+
+    return response.data;
+  }),
+
+  getSingleProductBySlug: (slug: string, token: string) => catchAsyncThunk(async () => {
     const response = await axiosInstance.get(`/products/s/${slug}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -75,9 +84,5 @@ export const getSingleProductBySlug = async (slug: string, token: string) => {
     });
 
     return response.data.data.product;
-  } catch (error) {
-    const message = error instanceof Error? error.message: error as string;
-    console.error(message);
-    toast.error(message)
-  }
+  })
 }

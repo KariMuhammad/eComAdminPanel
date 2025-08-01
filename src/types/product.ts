@@ -1,6 +1,7 @@
 export type Product = {
   mode: "get";
   id: string;
+  _id?: string;
   slug: string;
   name: string;
   description: string;
@@ -9,7 +10,7 @@ export type Product = {
   category: string; // Category ID
   brand: string; // Brand ID
   tags: string[]; // Array of tag IDs
-  images: string[]; // Array of image URLs
+  images: {url: string, public_id: string}[]; // Array of image URLs
   colors?: { name: string; hexCode: string; quantity: number }[]; // Optional array of color IDs
 };
 

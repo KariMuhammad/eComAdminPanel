@@ -34,3 +34,11 @@ export const convertUrlsToFiles = async (imageUrls: string[]): Promise<File[]> =
   );
   return Promise.all(filePromises);
 };
+
+export const catchAsyncThunk = (asyncCallback: () => Promise<any>): Promise<any> => {
+  return asyncCallback().then((data: any) => data).catch((error: unknown) => {
+    return Promise.reject(
+      error instanceof Error ? error.message : "Failed to handle operation on products!"
+    );
+  })
+}

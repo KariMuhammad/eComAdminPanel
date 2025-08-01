@@ -11,9 +11,9 @@ export interface CommonState {
 export interface Pagination {
   count: number;
   limit: number;
-  nextPage: number | null;
   page: number;
   prevPage: number | null;
+  nextPage: number | null;
   totalCount: number;
 }
 

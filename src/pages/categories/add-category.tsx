@@ -10,7 +10,12 @@ import { toast } from "sonner";
 import "react-quill/dist/quill.snow.css";
 export default function AddCategory() {
   const { user } = useAuth();
-  const [category, setCategory] = useState({ name: "", description: "", image: null })
+  const [category, setCategory] = useState<{
+    name: string;
+    description: string;
+    image: File | null
+  }>({ name: "", description: "", image: null });
+
   const navigate = useNavigate();
 
   const handleCategoryState = (key: string, value: any) => {
@@ -22,7 +27,20 @@ export default function AddCategory() {
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createCategory(category, user?.token!).then((data) => {
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append("name", category.name);
+    formData.append("description", category.description);
+
+    // Add image if it exists
+    if (category.image) {
+      formData.append("image", category.image);
+    } else {
+      return toast.error("Must upload one image");
+    }
+
+    createCategory(formData, user?.token!).then((data) => {
       toast.success("Successfully create category");
       navigate("/categories");
     }).catch(error => {
