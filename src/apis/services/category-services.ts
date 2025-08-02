@@ -1,3 +1,6 @@
+/**
+ * @deprecated file
+ */
 import { axiosInstance } from "..";
 
 export const fetchCategories = async () => {
@@ -29,9 +32,9 @@ export const createCategory = async (data: any, token: string) => {
       }
     })
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
-    const message = error instanceof Error ? error.message: error as any;
+    const message = error instanceof Error ? error.message : error as any;
     throw new Error(message || "Failed to create category!")
   }
 }
@@ -45,9 +48,9 @@ export const createBlogCategory = async (data: any, token: string) => {
       }
     })
 
-    return response.data
+    return response.data.data
   } catch (error) {
-    const message = error instanceof Error? error.message: error as string;
+    const message = error instanceof Error ? error.message : error as string;
     throw new Error(message || "Failed to create blog category");
   }
 }

@@ -8,20 +8,25 @@ import { CreateProductStepsComponent } from "@/constants/create-product-steps";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "@/components/shared/error-message";
 import useProductCreation from "@/hooks/use-product-creation";
+import useAuth from "@/hooks/use-auth";
 
 import {
-  fetchCategories,
-  type CategoryStateType,
+  useGetCategoriesQuery
 } from "@/app/redux/features/categories";
 import type { AppDispatch, RootState } from "@/app/redux/store";
 import { fetchBrands, type BrandStateType } from "@/app/redux/features/brands";
+import { toast } from "sonner";
 
 
 export default function AddProductInfo() {
   // Get All Categories & Brands From My Backend API
-  const { categories } = useSelector<RootState, CategoryStateType>(
-    (state) => state.categories
-  );
+  const { user: { token } } = useAuth();
+  const { data, isLoading: categoriesLoading } = useGetCategoriesQuery({ token, page: 1, limit: 10 });
+  const categories = data?.categories || [];
+
+  if (categoriesLoading)
+    toast.info("Categories of products loading...");
+
   const { brands } = useSelector<RootState, BrandStateType>(
     (state) => state.brands
   );
@@ -41,7 +46,6 @@ export default function AddProductInfo() {
   console.log("Errors in Validation", errors)
 
   const { images, colors, tags } = form;
-
   console.log("Form Values", form);
 
   const handleChange = (key: string, value: any) => {
@@ -88,7 +92,6 @@ export default function AddProductInfo() {
 
   // Fetch Categories & Brands
   useEffect(() => {
-    if (!categories.length) dispatch(fetchCategories());
     if (!brands.length) dispatch(fetchBrands());
   }, []);
 
@@ -130,7 +133,7 @@ export default function AddProductInfo() {
         >
           <option value="">Select category</option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
+            <option key={cat._id} value={cat._id}>
               {cat.name}
             </option>
           ))}

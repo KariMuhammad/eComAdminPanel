@@ -17,11 +17,11 @@ export const createBrand = async (data: any, token: string) => {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    }) 
+    })
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
-    const message = error instanceof Error? error.message: error as any;
+    const message = error instanceof Error ? error.message : error as any;
     console.log(message);
     throw new Error(message || "Failed to create brand");
   }

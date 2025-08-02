@@ -69,6 +69,7 @@ function App() {
             {/* ---------------- Categories Routes ---------------- */}
             <Route path="/categories" element={<CategoryList />} />
             <Route path="/categories/add" element={<AddCategory />} />
+            <Route path="/categories/edit/:id" element={<AddCategory mode="edit" />} />
             {/* ---------------- ./Categories Routes ---------------- */}
 
             {/* ---------------- Brands Routes ---------------- */}

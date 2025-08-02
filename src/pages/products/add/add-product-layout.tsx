@@ -107,7 +107,7 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
         setValue("name", data.name);
         setValue("description", data.description);
         setValue("price", data.price);
-        setValue("category", data.category);
+        setValue("category", data.category[0]);
         setValue("brand", data.brand);
         setValue("quantity", data.quantity);
         setValue("tags", data.tags || []);

@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 // pages/ProductsPage.tsx
 import {
   deleteProduct as deleteProductThunk,
-  fetchProducts,
-  type ProductState,
+  fetchProducts
 } from "@/app/redux/features/products";
 import type { AppDispatch, RootState } from "@/app/redux/store";
 import useAuth from "@/hooks/use-auth";

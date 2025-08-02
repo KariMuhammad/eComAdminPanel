@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: null | {
+  user: {
     token: string;
     username: string;
     email: string;
@@ -16,7 +16,12 @@ interface AuthState {
 
 const initialState: CommonState & AuthState = {
   isAuthenticated: false,
-  user: null,
+  user: {
+    email: "",
+    mobile: "",
+    token: "",
+    username: ""
+  },
   loading: false,
   error: null,
   message: null,
@@ -57,7 +62,7 @@ const authSlice = createSlice({
       state.error = null;
       state.isAuthenticated = false;
       state.loading = false;
-      state.user = null;
+      state.user = initialState.user;
       state.message = "Logout";
     },
   },
@@ -67,7 +72,7 @@ const authSlice = createSlice({
       state.error = null;
       state.message = null;
       state.isAuthenticated = false;
-      state.user = null;
+      state.user = initialState.user;
     });
 
     builder.addCase(login.fulfilled, (state, action) => {
@@ -88,7 +93,7 @@ const authSlice = createSlice({
       state.error = action.payload as string;
       state.message = "Login failed";
       state.isAuthenticated = false;
-      state.user = null;
+      state.user = initialState.user;
     });
   },
 });

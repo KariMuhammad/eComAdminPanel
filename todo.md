@@ -29,13 +29,16 @@
 
 ## Products
 
-- [ ] Implement product management features
+- [x] Implement product management features
   - [x] List all products
   - [x] Add new product
-  - [ ] Edit existing product
-  - [ ] Delete product
-  - [ ] Product image upload functionality
-  - [ ] Product categories management
+  - [x] Edit existing product
+  - [x] Delete product
+  - [x] Product image upload functionality
+  - [x] Product categories management
+
+info:
+- implemented manual optimistic update using redux thunk
 
 ## Gallery
 

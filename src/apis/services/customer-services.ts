@@ -12,7 +12,7 @@ export const fetchCustomers = async (token: string) => {
       throw new Error("Network response was not ok");
     }
 
-    const data = await response.data;
+    const data = await response.data.data;
     return data;
   } catch (error) {
     console.error("Failed to fetch customers:", error);

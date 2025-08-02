@@ -1,11 +1,13 @@
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from '@reduxjs/toolkit/query'
+
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import { useDispatch } from "./../../../node_modules/react-redux/src/hooks/useDispatch";
-import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./features/auth";
 import { customerReducer } from "./features/customers";
 import { persistStore, persistReducer } from "redux-persist";
 import { productReducer } from "./features/products";
-import { categoryReducer } from "./features/categories";
+import { categoriesApi } from "./features/categories";
 import { brandReducer } from "./features/brands";
 import { orderReducer } from "./features/orders";
 import { blogCategoryReducer } from "./features/blog-categories";
@@ -23,7 +25,7 @@ const store = configureStore({
     auth: persistedReducer, // Use the persisted reducer for auth state
     customers: customerReducer, // Regular reducer for customers state
     products: productReducer, // Regular reducer for products state
-    categories: categoryReducer,
+    [categoriesApi.reducerPath]: categoriesApi.reducer,
     brands: brandReducer,
     orders: orderReducer,
     blogCategories: blogCategoryReducer,
@@ -36,10 +38,11 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }),
+    }).concat(categoriesApi.middleware),
 });
 
 export default store;
+setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

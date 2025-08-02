@@ -1,20 +1,55 @@
-import { createCategory } from "@/apis/services/category-services";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useAuth from "@/hooks/use-auth";
-import React, { useState } from "react";
 import ReactQuill from "react-quill";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import "react-quill/dist/quill.snow.css";
-export default function AddCategory() {
-  const { user } = useAuth();
+import { useCreateCategoryMutation, useGetCategoryQuery, useUpdateCategoryMutation } from "@/app/redux/features/categories";
+import { convertUrlToFile } from "@/lib/utils";
+
+type AddCategoryProps = {
+  mode?: "create" | "edit";
+}
+
+export default function AddCategory({ mode = "create" }: AddCategoryProps) {
+  const { id } = useParams();
+
+  const { user: { token } } = useAuth();
+  const { data: categoryById, isLoading: categoryLoading } = id ? useGetCategoryQuery({ id, token }) : {};
+
+  const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
+
   const [category, setCategory] = useState<{
     name: string;
     description: string;
     image: File | null
   }>({ name: "", description: "", image: null });
+
+  useEffect(() => {
+    if (mode === "edit" && id && categoryById) {
+      setCategory({
+        name: categoryById.name,
+        description: categoryById.description,
+        image: null
+      })
+
+      if (!categoryById.image) return;
+
+      const loadingImage = toast.info("Loading category image...")
+      convertUrlToFile(categoryById.image, "category-image").then(img => {
+        console.log("Image", img);
+
+        setCategory((p) => ({ ...p, image: img }));
+        toast.dismiss(loadingImage)
+      }).catch(error => {
+        console.log("Error in converting url to file")
+      })
+    }
+  }, [mode, categoryLoading])
 
   const navigate = useNavigate();
 
@@ -40,18 +75,33 @@ export default function AddCategory() {
       return toast.error("Must upload one image");
     }
 
-    createCategory(formData, user?.token!).then((data) => {
-      toast.success("Successfully create category");
-      navigate("/categories");
-    }).catch(error => {
-      toast.error(error);
-    });
-    console.log(category);
+    if (mode === "create") {
+      createCategory({ data: formData, token: token }).then((data) => {
+        toast.success("Successfully create category");
+        navigate("/categories");
+      }).catch(error => {
+        toast.error(error);
+      });
+    }
+
+    if (mode === "edit" && id) {
+      updateCategory({ id, updatedData: formData, token }).then(() => {
+        toast.success("Successfully updated category");
+        navigate("/categories")
+      }).catch(error => {
+        toast.error(error)
+      })
+    }
+
+    console.log("Category ", category);
   }
+
+  if (isCreating)
+    toast.info("Creating Category...");
 
   return (
     <div className="h-full container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add New Category</h1>
+      <h1 className="text-2xl font-bold mb-4">{mode === "create" ? "Add New" : "Edit"} Category</h1>
 
       <form className="space-y-4" onSubmit={onSubmit}>
         <div>
@@ -113,7 +163,7 @@ export default function AddCategory() {
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
-          Add Category
+          {mode === "create" ? "Add" : "Edit"} Category
         </button>
       </form>
     </div>
