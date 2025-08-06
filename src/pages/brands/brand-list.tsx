@@ -1,29 +1,43 @@
-import type { RootState } from "@/app/redux/store";
 import ListPage from "@/layouts/page-list";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch } from "@/app/redux/store";
-import { fetchBrands, type BrandStateType } from "@/app/redux/features/brands";
+import { useDeleteBrandMutation, useGetBrandsQuery } from "@/app/redux/features/brands";
+import { Button } from "@/components/ui/button";
+import { EditIcon, TrashIcon } from "lucide-react";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { useModal } from "@/hooks/useModal";
+import { ModalSizes } from "@/types";
+import { DeleteModal } from "@/components/modal-templates/DeleteModal";
+import type { Brand } from "@/types/brands";
 
 export default function BrandList() {
-  const dispatch = useDispatch<AppDispatch>();
 
-  const { brands } = useSelector<RootState, BrandStateType>(
-    (store) => store.brands
-  );
+  const { openModal } = useModal();
 
-  useEffect(() => {
-    dispatch(fetchBrands());
-  }, []);
+  const { data, isLoading, isSuccess } = useGetBrandsQuery();
+
+  const [deleteBrand, { isLoading: isLoadingDelete }] = useDeleteBrandMutation();
+
+  const handleDelete = ({ _id }: Pick<Brand, "_id">) => {
+    openModal({
+      title: "Delete Confirm",
+      size: ModalSizes.sm,
+      children: <DeleteModal onConfirm={() => deleteBrand({ _id })} />
+    })
+  }
+
+  const brands = data || [];
 
   console.log("brands", brands);
+
+  if (isLoadingDelete)
+    toast.warning("Deleting brand...⚠️")
 
   return (
     <ListPage
       title="Brands"
       buttonLabel="Add Brand"
       buttonUrl="/brands/add"
-      columns={["id", "image", "name", "description"]}
+      columns={["id", "image", "name", "description", "actions"]}
       data={brands}
       renderRow={(brand, index) => (
         <tr key={index}>
@@ -31,6 +45,16 @@ export default function BrandList() {
           <td>{brand.image}</td>
           <td>{brand.name}</td>
           <td><div dangerouslySetInnerHTML={{ __html: brand.description }} /></td>
+          <td>
+            <Link to={`/brands/edit/${brand._id}`}>
+              <Button variant="outline" size="sm">
+                <EditIcon />
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" onClick={() => handleDelete({ _id: brand._id })}>
+              <TrashIcon />
+            </Button>
+          </td>
         </tr>
       )}
     />

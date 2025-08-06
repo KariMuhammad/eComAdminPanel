@@ -1,11 +1,8 @@
-import { useState, useCallback } from "react";
+import { useContext } from "react";
+import { ModalContext } from "@/context/modal-context";
 
-export const useModal = (initialState: boolean = false) => {
-  const [isOpen, setIsOpen] = useState(initialState);
+export const useModal = () => {
+  const { isOpen, size, title, children, closeModal, openModal } = useContext(ModalContext);
 
-  const openModal = useCallback(() => setIsOpen(true), []);
-  const closeModal = useCallback(() => setIsOpen(false), []);
-  const toggleModal = useCallback(() => setIsOpen((prev) => !prev), []);
-
-  return { isOpen, openModal, closeModal, toggleModal };
+  return { isOpen, size, title, children, openModal, closeModal };
 };

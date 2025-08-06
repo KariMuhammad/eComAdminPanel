@@ -6,10 +6,24 @@ import {
 import ListPage from "@/layouts/page-list";
 import useAuth from "@/hooks/use-auth";
 import { Link } from "react-router-dom";
+import { useModal } from "@/hooks/useModal";
+import { ModalSizes } from "@/types";
+import { DeleteModal } from "@/components/modal-templates/DeleteModal";
 export default function CategoryList() {
-  const { user: { token } } = useAuth();
-  const { isLoading, isError, data: categories, error } = useGetCategoriesQuery({ token, page: 1, limit: 10 });
+  useAuth();
+
+  const { openModal } = useModal();
+
+  const { isLoading, isError, data: categories, error } = useGetCategoriesQuery({ page: 1, limit: 10 });
   const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
+
+  const handleDelete = (id: string) => {
+    openModal({
+      title: "Delete Confirm",
+      size: ModalSizes.md,
+      children: <DeleteModal onConfirm={() => deleteCategory({ id })} />
+    });
+  }
 
   console.log("categories", categories);
   console.log("Error", error);
@@ -51,7 +65,7 @@ export default function CategoryList() {
 
                   <button
                     className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700"
-                    onClick={() => deleteCategory({ id: category._id, token })}
+                    onClick={() => handleDelete(category._id)}
                   >
                     Delete
                   </button>

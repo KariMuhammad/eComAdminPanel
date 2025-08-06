@@ -7,12 +7,17 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import "./index.css";
 import { Toaster } from "sonner";
+import { ModalProvider } from "./context/modal-context.tsx";
+import Modal from "./components/ui/modal.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Toaster position="top-center" richColors />
-      <App />
+      <ModalProvider>
+        <Toaster position="top-center" richColors />
+        <App />
+        <Modal />
+      </ModalProvider>
     </PersistGate>
   </Provider>
 );

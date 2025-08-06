@@ -38,13 +38,13 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
-export const createProduct = createAsyncThunk("products/create", async ({ data, token }: { token: string; data: Product | FormData }, thunkAPI) => {
+export const createProduct = createAsyncThunk("products/create", async ({ data, token }: { token: string; data: Product | FormData }) => {
   try {
     const product = await api.create(data, token);
     return product;
   } catch (error) {
     console.log("Error ", error);
-    return thunkAPI.rejectWithValue("Failed to create products");
+    throw new Error((error as Error).message || "Failed to create products");
   }
 })
 

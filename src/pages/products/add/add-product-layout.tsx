@@ -81,13 +81,25 @@ function AddProductForm({ mode = "create" }: AddProductFormProps) {
 
     // Handle form submission with FormData
     try {
-      if (contextMode === "create") dispatch(createProduct({ data: formData, token: user?.token! }));
-      if (contextMode === "edit" && product?._id) dispatch(updateProduct({ id: product?._id, updatedData: formData, token: user?.token! }));
+      if (contextMode === "create") {
+        const result = await dispatch(createProduct({ data: formData, token: user?.token! }));
+        if (createProduct.rejected.match(result)) {
+          console.log("Error ", result.error)
+          throw new Error(result.error?.message || 'Failed to create product');
+        }
+      }
 
-      toast(`Successfully ${mode === "create" ? "created" : "modified"} product`);
+      if (contextMode === "edit" && product?._id) {
+        const result = await dispatch(updateProduct({ id: product?._id, updatedData: formData, token: user?.token! }));
+        if (updateProduct.rejected.match(result)) {
+          throw new Error(result.error?.message || 'Failed to update product');
+        }
+      }
+
+      toast.success(`Successfully ${mode === "create" ? "created" : "modified"} product`);
       navigate("/products");
     } catch (error) {
-      toast(`Failed to ${mode === "create" ? "create" : "modify"} product`);
+      toast.error(`Failed to ${mode === "create" ? "create" : "modify"} product: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

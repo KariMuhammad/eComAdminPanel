@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -43,7 +44,7 @@ export function catchAsyncThunk<T>(asyncFn: () => Promise<T>): Promise<T> {
       return await asyncFn()
     } catch (error) {
       console.error('Async thunk error:', error)
-      throw error
+      throw error instanceof AxiosError ? new Error(error.response?.data.errors.message) : error
     }
   })()
 }
@@ -52,9 +53,15 @@ export function catchAsyncThunk<T>(asyncFn: () => Promise<T>): Promise<T> {
 export const createBaseQueryWithAuth = (baseUrl: string) => {
   const baseQuery = fetchBaseQuery({
     baseUrl,
-    prepareHeaders: (headers, { getState }) => {
-      return headers
-    },
+    prepareHeaders: (headers) => {
+      const persistRoot = localStorage.getItem("persist:auth");
+      const token = persistRoot ? JSON.parse(JSON.parse(persistRoot).token) ?? "" : "";
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    }
   });
 
   return async (args: any, api: any, extraOptions: any) => {

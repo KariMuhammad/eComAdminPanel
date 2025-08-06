@@ -17,12 +17,14 @@ import { loginSchema } from "@/schemas/auth-data";
 import { useAppDispatch } from "@/app/redux/store";
 import { login } from "@/app/redux/features/auth";
 import type { LoginSchema } from "@/interfaces";
+import { useState } from "react";
 
 export default function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const dispatch = useAppDispatch();
+  const [disabled, setDisabled] = useState(false);
 
   const {
     handleSubmit,
@@ -42,7 +44,12 @@ export default function LoginForm({
     // Handle login logic here
     console.log("Login data submitted:", data);
     // You can call your login API here
-    dispatch(login(data));
+    try {
+      dispatch(login(data));
+      setDisabled(true);
+    } catch (error) {
+      setDisabled(false);
+    }
   };
 
   return (
@@ -97,6 +104,7 @@ export default function LoginForm({
               </div>
               <div className="flex flex-col gap-3">
                 <input
+                  disabled={disabled}
                   type="submit"
                   value="Login"
                   className="px-2 py-1 bg-black text-white w-full"

@@ -1,11 +1,8 @@
-import { useEffect } from "react";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 import { CreateProductStepsComponent } from "@/constants/create-product-steps";
-import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "@/components/shared/error-message";
 import useProductCreation from "@/hooks/use-product-creation";
 import useAuth from "@/hooks/use-auth";
@@ -13,25 +10,18 @@ import useAuth from "@/hooks/use-auth";
 import {
   useGetCategoriesQuery
 } from "@/app/redux/features/categories";
-import type { AppDispatch, RootState } from "@/app/redux/store";
-import { fetchBrands, type BrandStateType } from "@/app/redux/features/brands";
+import { useGetBrandsQuery } from "@/app/redux/features/brands";
 import { toast } from "sonner";
 
 
 export default function AddProductInfo() {
   // Get All Categories & Brands From My Backend API
-  const { user: { token } } = useAuth();
-  const { data, isLoading: categoriesLoading } = useGetCategoriesQuery({ token, page: 1, limit: 10 });
+  useAuth();
+
+  const { data, isLoading: categoriesLoading } = useGetCategoriesQuery({ page: 1, limit: 10 });
   const categories = data?.categories || [];
 
-  if (categoriesLoading)
-    toast.info("Categories of products loading...");
-
-  const { brands } = useSelector<RootState, BrandStateType>(
-    (state) => state.brands
-  );
-
-  const dispatch = useDispatch<AppDispatch>();
+  const { data: brands } = useGetBrandsQuery();
 
   // Get Data From Context
   const { formMethods, mode, markFieldAsChanged, isFieldChanged } = useProductCreation();
@@ -90,11 +80,6 @@ export default function AddProductInfo() {
     return isFieldChanged(fieldName);
   };
 
-  // Fetch Categories & Brands
-  useEffect(() => {
-    if (!brands.length) dispatch(fetchBrands());
-  }, []);
-
   return (
     <>
       <CreateProductStepsComponent currentStep={0} />
@@ -151,8 +136,8 @@ export default function AddProductInfo() {
           required
         >
           <option value="">Select brand</option>
-          {brands.map((brand) => (
-            <option key={brand.id} value={brand.id}>
+          {brands && brands.map((brand) => (
+            <option key={brand._id} value={brand._id}>
               {brand.name}
             </option>
           ))}

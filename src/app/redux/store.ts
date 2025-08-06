@@ -8,17 +8,18 @@ import { customerReducer } from "./features/customers";
 import { persistStore, persistReducer } from "redux-persist";
 import { productReducer } from "./features/products";
 import { categoriesApi } from "./features/categories";
-import { brandReducer } from "./features/brands";
+import { brandApi } from "./features/brands";
 import { orderReducer } from "./features/orders";
 import { blogCategoryReducer } from "./features/blog-categories";
 import { couponReducer } from "./features/coupons";
 
-const persistConfig = {
-  key: "root",
+const authPersistConfig = {
+  key: "auth",
   storage,
+  whitelist: ["user", "token", "isAuthenticated"] // Only persist these fields
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistedReducer = persistReducer(authPersistConfig, authReducer);
 
 const store = configureStore({
   reducer: {
@@ -26,7 +27,7 @@ const store = configureStore({
     customers: customerReducer, // Regular reducer for customers state
     products: productReducer, // Regular reducer for products state
     [categoriesApi.reducerPath]: categoriesApi.reducer,
-    brands: brandReducer,
+    [brandApi.reducerPath]: brandApi.reducer,
     orders: orderReducer,
     blogCategories: blogCategoryReducer,
     coupons: couponReducer
@@ -38,7 +39,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }).concat(categoriesApi.middleware),
+    }).concat(categoriesApi.middleware).concat(brandApi.middleware),
 });
 
 export default store;

@@ -75,6 +75,7 @@ function App() {
             {/* ---------------- Brands Routes ---------------- */}
             <Route path="/brands" element={<BrandList />} />
             <Route path="/brands/add" element={<AddBrand />} />
+            <Route path="/brands/edit/:id" element={<AddBrand mode="edit" />} />
             {/* ---------------- ./Brands Routes ---------------- */}
 
             {/* ---------------- Coupons Routes ---------------- */}

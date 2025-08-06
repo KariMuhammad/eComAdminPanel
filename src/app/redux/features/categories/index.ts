@@ -20,18 +20,15 @@ interface CategoriesResponse {
 
 interface CreateCategoryRequest {
   data: Category | FormData
-  token: string
 }
 
 interface UpdateCategoryRequest {
   id: string
   updatedData: Partial<Category> | FormData
-  token: string
 }
 
 interface DeleteCategoryRequest {
   id: string
-  token: string
 }
 
 export const categoriesApi = createApi({
@@ -43,12 +40,9 @@ export const categoriesApi = createApi({
 
   endpoints: (builder) => ({
     // Fetch categories with pagination
-    getCategories: builder.query<CategoriesResponse, { token: string; page?: number; limit?: number }>({
-      query: ({ token, page = 1, limit = 10 }) => ({
+    getCategories: builder.query<CategoriesResponse, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 10 }) => ({
         url: `?page=${page}&limit=${limit}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
 
       transformResponse: (response: { data: CategoriesResponse }) => response.data,
@@ -63,12 +57,9 @@ export const categoriesApi = createApi({
     }),
 
     // Get single category
-    getCategory: builder.query<Category, { id: string; token: string }>({
-      query: ({ id, token }) => ({
+    getCategory: builder.query<Category, { id: string; }>({
+      query: ({ id }) => ({
         url: `/${id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
 
       transformResponse: (response: { data: { category: Category } }) => response.data.category,
@@ -78,26 +69,23 @@ export const categoriesApi = createApi({
 
     // Create category
     createCategory: builder.mutation<Category, CreateCategoryRequest>({
-      query: ({ data, token }) => ({
+      query: ({ data }) => ({
         url: '',
         method: 'POST',
         body: data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
 
-      transformResponse: (response: { data: Category }) => response.data,
+      transformResponse: (response: { data: { category: Category } }) => response.data.category,
 
       invalidatesTags: [{ type: 'Category', id: 'LIST' }],
       // Optimistic update for better UX
-      async onQueryStarted({ data, token }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ data }, { dispatch, queryFulfilled }) {
         try {
           const { data: newCategory } = await queryFulfilled
 
           // Update the cache for getCategories queries
           dispatch(
-            categoriesApi.util.updateQueryData('getCategories', { token, page: 1 }, (draft) => {
+            categoriesApi.util.updateQueryData('getCategories', { page: 1 }, (draft) => {
               draft.categories.unshift(newCategory)
               draft.pagination.totalCount += 1
 
@@ -116,27 +104,24 @@ export const categoriesApi = createApi({
 
     // Update category
     updateCategory: builder.mutation<Category, UpdateCategoryRequest>({
-      query: ({ id, updatedData, token }) => ({
+      query: ({ id, updatedData }) => ({
         url: `/${id}`,
         method: 'PATCH',
         body: updatedData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
 
       transformResponse: (response: { data: Category }) => response.data,
 
       invalidatesTags: (result, error, { id }) => [{ type: 'Category', id }],
       // Optimistic update
-      async onQueryStarted({ id, updatedData, token }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ id, updatedData }, { dispatch, queryFulfilled }) {
         // Optimistically update all queries containing this category
         const patchResults: any[] = []
 
         // Update single category query
         patchResults.push(
           dispatch(
-            categoriesApi.util.updateQueryData('getCategory', { id, token }, (draft) => {
+            categoriesApi.util.updateQueryData('getCategory', { id }, (draft) => {
               Object.assign(draft, updatedData)
             })
           )
@@ -144,7 +129,7 @@ export const categoriesApi = createApi({
 
         // Update categories list queries
         dispatch(
-          categoriesApi.util.updateQueryData('getCategories', { token }, (draft) => {
+          categoriesApi.util.updateQueryData('getCategories', {}, (draft) => {
             const categoryIndex = draft.categories.findIndex(cat => cat._id === id)
             if (categoryIndex !== -1) {
               Object.assign(draft.categories[categoryIndex], updatedData)
@@ -163,12 +148,9 @@ export const categoriesApi = createApi({
 
     // Delete category
     deleteCategory: builder.mutation<void, DeleteCategoryRequest>({
-      query: ({ id, token }) => ({
+      query: ({ id }) => ({
         url: `/${id}`,
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
 
       transformResponse: (response: { data: void }) => response.data,
@@ -178,13 +160,13 @@ export const categoriesApi = createApi({
         { type: 'Category', id: 'LIST' },
       ],
       // Optimistic update
-      async onQueryStarted({ id, token }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
         const patchResults: any[] = []
 
         // Remove from all categories queries
         patchResults.push(
           dispatch(
-            categoriesApi.util.updateQueryData('getCategories', { token }, (draft) => {
+            categoriesApi.util.updateQueryData('getCategories', {}, (draft) => {
               const index = draft.categories.findIndex(cat => cat._id === id)
               if (index !== -1) {
                 draft.categories.splice(index, 1)
