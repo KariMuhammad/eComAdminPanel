@@ -2,31 +2,30 @@
 
 ## Brands
 
-- [ ] Implement brand management features
+- [x] Implement brand management features
   - [x] List all brands
   - [x] Add new brand
-  - [ ] Edit existing brand
-  - [ ] Delete brand
-  - [ ] Brand logo upload functionality
+  - [x] Edit existing brand
+  - [x] Delete brand
+  <!-- - [ ] Brand logo upload functionality -->
 
 ## Categories
 
-- [ ] Implement category management features
+- [x] Implement category management features
   - [x] List all categories
   - [x] Add new category
-  - [ ] Edit existing category
-  - [ ] Delete category
-  - [ ] Category image upload functionality
+  - [x] Edit existing category
+  - [x] Delete category
+  - [x] Category image upload functionality
 
 ## Colors
 
-- [ ] Implement color management features
+- [x] Implement color management features
   - [x] List all colors
   - [x] Add new color
-  - [ ] Edit existing color
-  - [ ] Delete color
-  - [ ] Color image upload functionality
-
+  - [x] Edit existing color
+  - [x] Delete color
+  
 ## Products
 
 - [x] Implement product management features
