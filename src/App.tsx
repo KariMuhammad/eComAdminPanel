@@ -64,38 +64,48 @@ function App() {
             </Route>
             {/* ---------------- ./Products Routes ----------------  */}
 
-            {/* <Route path="/gallery/add-image" element={<ِAddImageInGalleryUser />} */}
-
             {/* ---------------- Categories Routes ---------------- */}
-            <Route path="/categories" element={<CategoryList />} />
-            <Route path="/categories/add" element={<AddCategory />} />
-            <Route path="/categories/edit/:id" element={<AddCategory mode="edit" />} />
+            <Route path="/categories">
+              <Route index element={<CategoryList />} />
+              <Route path="add" element={<AddCategory />} />
+              <Route path="edit/:id" element={<AddCategory mode="edit" />} />
+            </Route>
             {/* ---------------- ./Categories Routes ---------------- */}
 
             {/* ---------------- Brands Routes ---------------- */}
-            <Route path="/brands" element={<BrandList />} />
-            <Route path="/brands/add" element={<AddBrand />} />
-            <Route path="/brands/edit/:id" element={<AddBrand mode="edit" />} />
+            <Route path="/brands">
+              <Route index element={<BrandList />} />
+              <Route path="add" element={<AddBrand />} />
+              <Route path="edit/:id" element={<AddBrand mode="edit" />} />
+            </Route>
             {/* ---------------- ./Brands Routes ---------------- */}
 
             {/* ---------------- Coupons Routes ---------------- */}
-            <Route path="/coupons" element={<CouponList />} />
-            <Route path="/coupons/add" element={<AddCoupon />} />
+            <Route path="/coupons" >
+              <Route index element={<CouponList />} />
+              <Route path="add" element={<AddCoupon />} />
+              <Route path="edit/:id" element={<AddCoupon mode="edit" />} />
+            </Route>
             {/* ---------------- ./Coupons Routes ---------------- */}
 
-            {/* ---------------- Colors Routes ---------------- */}
-            {/* ---------------- ./Colors Routes ---------------- */}
+            {/* ---------------- /Blog Categories Routes ---------------- */}
+            <Route path="/blog-category" >
+              <Route index element={<BlogCategoryList />} />
+              <Route path="add" element={<AddBlogCategory />} />
+              <Route path="edit/:id" element={<AddBlogCategory mode="edit" />} />
+            </Route>
+            {/* ---------------- - ./Blog Category Routes ---------------- */}
 
-            {/* ---------------- Blogs Routes ---------------- */}
-            {/* ---------------- - Blog Category ---------------- */}
-            <Route path="/blog-category" element={<BlogCategoryList />} />
-            <Route path="/blog-category/add" element={<AddBlogCategory />} />
-            {/* ---------------- - ./Blog Category ---------------- */}
-            <Route path="/blogs" element={<BlogList />} />
-            <Route path="/add-blog" element={<AddBlog />} />
-            <Route path="/add-blog/upload-image" element={<UploadImageBlog />} />
+            {/* ---------------- ./Blogs Routes ---------------- */}
+            <Route path="/blogs" >
+              <Route index element={<BlogList />} />
+              <Route path="add" element={<AddBlog />} />
+              <Route path="add/upload-image" element={<UploadImageBlog />} />
+              <Route path="edit/:id" element={<AddBlog mode="edit" />} />
+            </Route>
             {/* ---------------- ./Blogs Routes ---------------- */}
 
+            {/* <Route path="/gallery/add-image" element={<ِAddImageInGalleryUser />} */}
 
             <Route path="/orders" element={<OrdersList />} />
             <Route path="/customers" element={<CustomersList />} />

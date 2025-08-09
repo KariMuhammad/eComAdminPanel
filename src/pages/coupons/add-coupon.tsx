@@ -1,39 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useAuth from "@/hooks/use-auth";
 
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { DiscountType } from "@/types";
-import { createCoupon } from "@/apis/services/coupon-service";
+import { DiscountType, type Coupon } from "@/types";
 import { DatePicker } from "@/components/ui/DatePicker";
 
-export default function AddCoupon() {
-  const { user } = useAuth();
-  const [coupon, setCoupon] = useState({ code: "", discountType: DiscountType.PERCENTAGE, discount: 0, usageLimit: 0, expireAt: new Date() });
-  const navigate = useNavigate();
-  // const dateRef = useRef(null);
+import useAuth from "@/hooks/use-auth";
+import { useCreateCouponMutation, useGetCouponByIdQuery } from "@/app/redux/features/coupons";
 
-  const handleCouponState = (key: string, value: string) => {
+type AddCouponProps = {
+  mode?: "create" | "edit";
+}
+
+export default function AddCoupon({ mode = "create" }: AddCouponProps) {
+  useAuth();
+
+  const [coupon, setCoupon] = useState<Omit<Coupon, "_id" | "usageCount">>({
+    code: "",
+    discountType: DiscountType.PERCENTAGE,
+    discount: 0,
+    usageLimit: 0,
+    expiredAt: new Date(),
+    isActive: false
+  });
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const { data: currentCoupon } = useGetCouponByIdQuery({ _id: id! }, { skip: !id }); // skip call if id is undefined
+  const [createCoupon] = useCreateCouponMutation();
+
+  console.log("Id", id, "Current Coupon", currentCoupon)
+
+  const handleCouponState = <K extends keyof Coupon>(key: K, value: Coupon[K]) => {
     setCoupon((p) => ({ ...p, [key]: value }))
   }
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createCoupon(coupon, user?.token!).then((data) => {
-      toast.success("Successfully Created Coupon");
-      navigate("/coupons")
-    }).catch(error => {
-      toast.error("Failed to create Coupon!", error)
-    })
+    if (mode === "create") {
+      createCoupon(coupon).then((data) => {
+        toast.success("Successfully Created Coupon");
+        navigate("/coupons")
+      }).catch(error => {
+        toast.error("Failed to create Coupon!", error)
+      })
+    }
+
+    if (mode === "edit") {
+      // updateCoupon
+    }
 
     console.log(coupon)
   }
 
+  useEffect(() => {
+    if (mode === "edit" && id && currentCoupon) {
+      console.log("Current Coupon", currentCoupon)
+      setCoupon(currentCoupon);
+    } else {
+      console.log("Hey hey")
+    }
+  }, [id, currentCoupon])
+
   return (
     <div className="h-full container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add New Coupon</h1>
+      <h1 className="text-2xl font-bold mb-4">{mode === "create" ? "Create" : "Edit"} New Coupon</h1>
 
       <form className="space-y-4" onSubmit={onSubmit}>
         <div>
@@ -48,7 +83,7 @@ export default function AddCoupon() {
             type="text"
             className="mt-1 p-2 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:border-blue-500 outline-none"
             placeholder="Enter Coupon Code"
-            onChange={(e) => handleCouponState("code", e.target.value)}
+            onChange={(e) => handleCouponState("code", e.target.value.toUpperCase())}
           />
         </div>
         {/* ./coupon code input */}
@@ -62,7 +97,7 @@ export default function AddCoupon() {
               name="coupon-discount-type"
               value={coupon.discountType}
               className="mt-1 p-2 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:border-blue-500 outline-none"
-              onChange={(e) => handleCouponState("discountType", e.target.value)}
+              onChange={(e) => handleCouponState("discountType", e.target.value as DiscountType)}
             >
               <option value={DiscountType.FIXED}>Fixed</option>
               <option value={DiscountType.PERCENTAGE}>Percentage</option>
@@ -84,7 +119,7 @@ export default function AddCoupon() {
               } : {}}
               value={coupon.discount}
               className="mt-1 p-2 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:border-blue-500 outline-none"
-              onChange={(e) => handleCouponState("discount", e.target.value)}
+              onChange={(e) => handleCouponState("discount", +e.target.value)}
             />
 
           </div>
@@ -99,7 +134,7 @@ export default function AddCoupon() {
               type="number"
               value={coupon.usageLimit}
               className="mt-1 p-2 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:border-blue-500 outline-none"
-              onChange={(e) => handleCouponState("usageLimit", e.target.value)}
+              onChange={(e) => handleCouponState("usageLimit", +e.target.value)}
             />
 
           </div>
@@ -110,14 +145,14 @@ export default function AddCoupon() {
           <Label>Expire At</Label>
           {/* <input type="date" name="expireAt" value={coupon.expireAt} onChange={(e) => handleCouponState("expireAt", e.target.value)} /> */}
 
-          <DatePicker value={coupon.expireAt} onChange={(value) => handleCouponState("expireAt", value || "")} />
+          <DatePicker value={new Date(coupon.expiredAt)} onChange={(value) => handleCouponState("expiredAt", value ? new Date(value) : new Date())} />
         </div>
 
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
-          Add Brand
+          {mode === "create" ? "Add" : "Update"} Brand
         </button>
       </form>
     </div>

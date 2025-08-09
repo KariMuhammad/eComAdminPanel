@@ -12,7 +12,6 @@ export enum DiscountType {
   PERCENTAGE = "PERCENTAGE",
   FIXED = "FIXED",
 }
-
 export enum ModalSizes {
   sm = "sm",
   md = "md",
@@ -20,3 +19,24 @@ export enum ModalSizes {
   xl = "xl",
   full = "full"
 }
+export type Coupon = {
+  _id: string;
+  code: string;
+  discountType: DiscountType,
+  discount: number;
+  usageLimit: number;
+  usageCount: number;
+  expiredAt: Date;
+  isActive: boolean;
+}
+
+export type Customer = {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  mobile: string;
+  address: string;
+  role: string;
+  status: boolean;
+};

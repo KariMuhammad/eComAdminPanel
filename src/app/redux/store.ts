@@ -10,8 +10,10 @@ import { productReducer } from "./features/products";
 import { categoriesApi } from "./features/categories";
 import { brandApi } from "./features/brands";
 import { orderReducer } from "./features/orders";
-import { blogCategoryReducer } from "./features/blog-categories";
-import { couponReducer } from "./features/coupons";
+import { BlogCategoryApi } from "./features/blog-categories";
+import { couponApi } from "./features/coupons";
+import { blogApi } from "./features/blog";
+
 
 const authPersistConfig = {
   key: "auth",
@@ -28,9 +30,10 @@ const store = configureStore({
     products: productReducer, // Regular reducer for products state
     [categoriesApi.reducerPath]: categoriesApi.reducer,
     [brandApi.reducerPath]: brandApi.reducer,
+    [couponApi.reducerPath]: couponApi.reducer,
+    [BlogCategoryApi.reducerPath]: BlogCategoryApi.reducer,
+    [blogApi.reducerPath]: blogApi.reducer,
     orders: orderReducer,
-    blogCategories: blogCategoryReducer,
-    coupons: couponReducer
   },
 
   devTools: true,
@@ -39,7 +42,12 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }).concat(categoriesApi.middleware).concat(brandApi.middleware),
+    })
+      .concat(categoriesApi.middleware)
+      .concat(brandApi.middleware)
+      .concat(couponApi.middleware)
+      .concat(BlogCategoryApi.middleware)
+      .concat(blogApi.middleware),
 });
 
 export default store;

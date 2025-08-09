@@ -15,10 +15,11 @@ type AddCategoryProps = {
 }
 
 export default function AddCategory({ mode = "create" }: AddCategoryProps) {
+  useAuth();
+
   const { id } = useParams();
 
-  const { user: { token } } = useAuth();
-  const { data: categoryById, isLoading: categoryLoading } = id ? useGetCategoryQuery({ id, token }) : {};
+  const { data: categoryById, isLoading: categoryLoading } = id ? useGetCategoryQuery({ id }) : {};
 
   const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
   const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
@@ -76,7 +77,7 @@ export default function AddCategory({ mode = "create" }: AddCategoryProps) {
     }
 
     if (mode === "create") {
-      createCategory({ data: formData, token: token }).then((data) => {
+      createCategory({ data: formData }).then((data) => {
         toast.success("Successfully create category");
         navigate("/categories");
       }).catch(error => {
@@ -85,7 +86,7 @@ export default function AddCategory({ mode = "create" }: AddCategoryProps) {
     }
 
     if (mode === "edit" && id) {
-      updateCategory({ id, updatedData: formData, token }).then(() => {
+      updateCategory({ id, updatedData: formData }).then(() => {
         toast.success("Successfully updated category");
         navigate("/categories")
       }).catch(error => {

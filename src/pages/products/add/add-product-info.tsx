@@ -11,7 +11,6 @@ import {
   useGetCategoriesQuery
 } from "@/app/redux/features/categories";
 import { useGetBrandsQuery } from "@/app/redux/features/brands";
-import { toast } from "sonner";
 
 
 export default function AddProductInfo() {

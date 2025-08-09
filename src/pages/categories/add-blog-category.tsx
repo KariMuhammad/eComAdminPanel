@@ -1,18 +1,28 @@
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import { toast } from "sonner";
 
-import { createBlogCategory } from "@/apis/services/category-services";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useAuth from "@/hooks/use-auth";
 
 import "react-quill/dist/quill.snow.css";
-export default function AddBlogCategory() {
-    const { user } = useAuth();
-    const [blogCategory, setBlogCategory] = useState({ name: "", description: "", image: null })
+
+type AddBlogCategoryProps = {
+    mode?: "create" | "edit";
+}
+
+import { type CreateBlogCategoryRequest, useCreateBlogCategoryMutation, useGetBlogCategoryByIdQuery, useUpdateBlogCategoryMutation } from "@/app/redux/features/blog-categories";
+import { convertUrlToFile } from "@/lib/utils";
+export default function AddBlogCategory({ mode = "create" }: AddBlogCategoryProps) {
+    useAuth();
     const navigate = useNavigate();
+
+    const { id } = useParams();
+
+    const { data: currentBlogCategory } = useGetBlogCategoryByIdQuery({ _id: id! }, { skip: !id });
+    const [blogCategory, setBlogCategory] = useState<CreateBlogCategoryRequest>({ name: "", description: "", image: null })
 
     const handleCategoryState = (key: string, value: any) => {
         setBlogCategory((p) => ({
@@ -21,21 +31,59 @@ export default function AddBlogCategory() {
         }))
     }
 
+    const [createBlogCategory] = useCreateBlogCategoryMutation();
+    const [updateBlogCategory] = useUpdateBlogCategoryMutation();
+
     const onSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        createBlogCategory(blogCategory, user?.token!).then(() => {
-            toast.success("Successfully create category");
-            navigate("/blog-category");
-        }).catch(error => {
-            toast.error(error);
-        });
+
+        const formData = new FormData();
+        if (!blogCategory.image) return;
+
+        formData.append("name", blogCategory.name);
+        formData.append("description", blogCategory.description);
+        formData.append("image", blogCategory.image);
+
+        if (mode === "create") {
+            createBlogCategory(formData).then(() => {
+                toast.success("Successfully create category");
+                navigate("/blog-category");
+            }).catch(error => {
+                toast.error(error);
+            });
+        }
+
+        if (mode === "edit" && id && currentBlogCategory) {
+            updateBlogCategory({ id, data: formData }).then(_ => {
+                toast.success("Successfully update category");
+                navigate("/blog-category");
+            }).catch(error => {
+                toast.error(error);
+            });
+        }
 
         console.log(blogCategory);
     }
 
+    useEffect(() => {
+        if (mode === "edit" && id && currentBlogCategory) {
+            setBlogCategory({
+                name: currentBlogCategory.name,
+                description: currentBlogCategory.description,
+                image: null
+            });
+
+            if (!currentBlogCategory.image) return;
+
+            convertUrlToFile(currentBlogCategory?.image, "blog-category-image").then((img) => {
+                setBlogCategory((p) => ({ ...p, image: img }))
+            })
+        }
+    }, [id, currentBlogCategory])
+
     return (
         <div className="h-full container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Add New Blog Category</h1>
+            <h1 className="text-2xl font-bold mb-4">{mode === "create" ? "Add New" : "Edit"} Blog Category</h1>
 
             <form className="space-y-4" onSubmit={onSubmit}>
                 <div>
@@ -97,7 +145,7 @@ export default function AddBlogCategory() {
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                 >
-                    Add Category
+                    {mode === "create" ? "Add" : "Edit"} Category
                 </button>
             </form>
         </div>

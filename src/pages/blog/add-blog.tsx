@@ -1,20 +1,65 @@
-import { useRef, useState } from "react";
-
-import Editor from "@/components/blog/editor";
+import { useEffect, useState, type FormEvent } from "react";
 import { CreateBlogStepsComponent } from "@/constants/create-blog-steps";
-import { useSelector } from "react-redux";
-import { type RootState } from "@/app/redux/store";
-import type { BlogCategoryState } from "@/app/redux/features/blog-categories";
+import { useGetBlogCategoriesQuery } from "@/app/redux/features/blog-categories";
+import ReactQuill from "react-quill";
+import { useCreateBlogMutation, useGetBlogByIdQuery, useUpdateBlogMutation } from "@/app/redux/features/blog";
+import { toast } from "sonner";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function AddBlog() {
+type AddBlogProps = {
+  mode?: "create" | "edit";
+}
+
+export default function AddBlog({ mode = "create" }: AddBlogProps) {
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [category, setCategory] = useState<string>("");
-  //   const [content, setContent] = useState<string>("");
 
-  const { blogCategories } = useSelector<RootState, BlogCategoryState>((state) => state.blogCategories);
+  const { id } = useParams();
 
-  const QuillRef = useRef(null);
+  const { data: currentBlog } = useGetBlogByIdQuery({ id: id! }, { skip: !id });
+  const { data: blogCategories } = useGetBlogCategoriesQuery();
+  const [createBlog] = useCreateBlogMutation();
+  const [updateBlog] = useUpdateBlogMutation();
+
+  const onSubmit = (ev: FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("title", title)
+    formData.append("description", content)
+    formData.append("category", category)
+
+    if (mode === "create") {
+      createBlog(formData).then(() => {
+        toast.success("Created Blog");
+        navigate("/blogs");
+      }).catch(e => {
+        toast.error("Error in create blog");
+      })
+    }
+
+    if (mode === "edit" && id) {
+      updateBlog({ id, data: formData }).then((d) => {
+        toast.success("Updated blog");
+        navigate("/blogs")
+      }).catch(error => {
+        toast.error("Error in update Blog");
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (mode === "edit" && id) {
+      if (!currentBlog) return;
+
+      setTitle(currentBlog.title);
+      setContent(currentBlog.description);
+    }
+  }, [id, currentBlog])
 
   return (
     <div className="h-full container mx-auto p-4">
@@ -23,7 +68,7 @@ export default function AddBlog() {
       {/* Stepper */}
       <CreateBlogStepsComponent currentStep={0} />
 
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={onSubmit}>
         <div>
           <label className="block text-lg font-medium text-gray-700">
             Title
@@ -42,14 +87,12 @@ export default function AddBlog() {
           <label className="block text-lg font-medium text-gray-700">
             Description
           </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            name="description"
-            rows={5}
-            className="mt-1 p-2 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:border-blue-500 outline-none"
-            placeholder="Write your blog description here"
-          ></textarea>
+          {/* Rich Text Content ReactQuill */}
+          <ReactQuill
+            className="h-1/2"
+            value={content}
+            onChange={(d) => setContent(d)}
+          />
         </div>
         {/* ./description input */}
         <div className="mb-4 flex items-center space-x-4">
@@ -64,13 +107,10 @@ export default function AddBlog() {
           >
 
             <option value="">Select a category</option>
-            {blogCategories.map((blogCategory) => <option value={blogCategory.id}>{blogCategory.name}</option>)}
+            {blogCategories && blogCategories.map((blogCategory) => <option value={blogCategory._id}>{blogCategory.name}</option>)}
           </select>
         </div>
         {/* ./category input */}
-
-        {/* Rich Text Content ReactQuill */}
-        <Editor ref={QuillRef} defaultValue="" />
 
         <button
           type="submit"

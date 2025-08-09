@@ -1,16 +1,10 @@
 import type { CommonState } from "@/interfaces";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import * as customerServices from "../../../../apis/services/customer-services";
+import customerServices from "../../../../apis/services/customer-services";
+import type { Customer } from "@/types";
 
-type Customer = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  mobile: string;
-  address: string;
-};
+
 
 type CustomerStateType = CommonState & {
   customers: Customer[];
@@ -23,11 +17,22 @@ const initialState: CustomerStateType = {
   message: "",
 };
 
+type UpdateCustomerRequest = {
+  id: string;
+  updatedData: Partial<Customer>;
+  token: string
+}
+
+// type CreateCustomerRequest = {
+//   data: Omit<Customer, "_id" | "role" | "status" | "address">;
+//   token: string
+// }
+
 export const fetchCustomers = createAsyncThunk(
   "customers/fetchCustomers",
   async (token: string) => {
     try {
-      const response = await customerServices.fetchCustomers(token);
+      const response = await customerServices.fetch(token);
       return response.data;
     } catch (error) {
       return Promise.reject(
@@ -36,6 +41,17 @@ export const fetchCustomers = createAsyncThunk(
     }
   }
 );
+
+export const updateCustomer = createAsyncThunk("customers/updateCustomer", async ({ id, updatedData, token }: UpdateCustomerRequest, thunkApi) => {
+  try {
+    const response = await customerServices.update(id, updatedData, token);
+    return response.data;
+  } catch (error) {
+    return Promise.reject(
+      error instanceof Error ? error.message : "Failed to updated customer"
+    )
+  }
+})
 
 export const customerSlice = createSlice({
   name: "customers",
@@ -62,6 +78,17 @@ export const customerSlice = createSlice({
       state.message = "Failed to fetch customers";
       state.customers = [];
     });
+
+    builder.addCase(updateCustomer.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.message = "Successfully updated customer";
+
+      const index = state.customers.findIndex((customer) => customer._id === action.payload._id);
+      if (index !== -1) {
+        state.customers[index] = action.payload;
+      }
+    })
   },
 });
 

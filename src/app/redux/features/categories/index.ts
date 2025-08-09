@@ -128,13 +128,15 @@ export const categoriesApi = createApi({
         )
 
         // Update categories list queries
-        dispatch(
-          categoriesApi.util.updateQueryData('getCategories', {}, (draft) => {
-            const categoryIndex = draft.categories.findIndex(cat => cat._id === id)
-            if (categoryIndex !== -1) {
-              Object.assign(draft.categories[categoryIndex], updatedData)
-            }
-          })
+        patchResults.push(
+          dispatch(
+            categoriesApi.util.updateQueryData('getCategories', {}, (draft) => {
+              const categoryIndex = draft.categories.findIndex(cat => cat._id === id)
+              if (categoryIndex !== -1) {
+                Object.assign(draft.categories[categoryIndex], updatedData)
+              }
+            })
+          )
         )
 
         try {
