@@ -228,8 +228,8 @@ This project has no specified license. All rights are reserved.
 
 ## Important links 🔗
 -   **Repository**: [https://github.com/KariMuhammad/eComAdminPanel](https://github.com/KariMuhammad/eComAdminPanel)
--   **Live Demo**: No live demo link available. Add it if it exists.
--   **Profile Links**: No profile link available. Add it if it exists.
+-   **Live Demo**: No live demo link available.
+-   **Profile Links**: No profile link available.
 
 
 
