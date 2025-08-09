@@ -37,7 +37,6 @@ eComAdminPanel is a admin dashboard for managing an e-commerce system. It provid
 - **Order Management**: View and manage customer orders. 🛒
 - **Customer Management**: Manage customer accounts. 🧑‍💼
 - **Authentication**: Secure admin authentication using Redux Toolkit.
-- **Drag and Drop Interface**: Utilizes `@dnd-kit` for intuitive drag and drop functionality in various components.
 
 
 
@@ -51,7 +50,6 @@ eComAdminPanel is a admin dashboard for managing an e-commerce system. It provid
 	- Tailwind CSS
 	- React Hook Form
 	- Zod Validation
-	- @dnd-kit
 - **Bundler**: Vite
 
 
