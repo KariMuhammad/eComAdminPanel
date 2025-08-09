@@ -8,7 +8,7 @@
 
 
 ## Description 📝
-eComAdminPanel is a comprehensive admin dashboard for managing an e-commerce system. It provides full control over essential data, including products, categories, brands, coupons, blogs, orders, and customers. Built with TypeScript, React, Redux Toolkit, and Shadcn-UI, it offers a modern and responsive interface for efficient e-commerce management.
+eComAdminPanel is a admin dashboard for managing an e-commerce system. It provides full control over essential data, including products, categories, brands, coupons, blogs, orders, and customers. Built with TypeScript, React, Redux Toolkit, and Shadcn-UI, it offers a modern and responsive interface for efficient e-commerce management.
 
 
 
